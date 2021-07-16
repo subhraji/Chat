@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="error_loading">Error loading! Please try again</string>
+    <string name="not_connected_to_internet">Not connected to internet</string>
+</resources>
