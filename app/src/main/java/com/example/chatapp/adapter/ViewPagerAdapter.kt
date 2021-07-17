@@ -1,41 +1,31 @@
 package com.example.chatapp.adapter
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.example.chatapp.view.fragment.ChatListFragment
+import com.example.chatapp.view.fragment.GroupListFragment
 import java.util.*
 
-class ViewPagerAdapter(manager: FragmentManager) : FragmentPagerAdapter(manager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class ViewPagerAdapter(var context: Context,
+                       fm: FragmentManager,
+                       var totalTabs: Int) : FragmentPagerAdapter(fm) {
 
-    private var lf = ArrayList<Fragment>()
-    private var lt = ArrayList<String>()
+    override fun getItem(position: Int): Fragment {
+        return when (position) {
+            0 -> {
+                ChatListFragment()
+            }
+            1 -> {
+                GroupListFragment()
+            }
 
-
-    fun getLf(): ArrayList<Fragment> {
-        return lf
+            else -> getItem(position)
+        }
     }
-
-    fun setLf(lf: ArrayList<Fragment>) {
-        this.lf = lf
+    override fun getCount(): Int {
+        return totalTabs
     }
-
-    fun getLt(): ArrayList<String> {
-        return lt
-    }
-
-    fun setLt(lt: ArrayList<String>) {
-        this.lt = lt
-    }
-
-    fun addFragment(fragment: Fragment?, title: String?) {
-        lf.add(fragment!!)
-        lt.add(title!!)
-    }
-
-    override fun getItem(position: Int): Fragment = lf[position]
-
-    override fun getCount(): Int = lf.size
-
-    override fun getPageTitle(position: Int): CharSequence? = lt[position]
 
 }

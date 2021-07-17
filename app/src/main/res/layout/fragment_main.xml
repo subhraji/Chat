@@ -5,10 +5,51 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragment.MainFragment">
-    <TextView
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/mainAppBarLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/purple_700"
+        app:layout_constraintTop_toTopOf="parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
+            <TextView
+                android:id="@+id/logoutBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:textColor="@color/white"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="10dp"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/purple_700"
+                android:layout_below="@+id/logoutBtn"
+                app:tabTextColor="@color/white"
+                android:scrollbars="horizontal"
+                app:tabIndicatorColor="@color/white">
+            </com.google.android.material.tabs.TabLayout>
+
+        </RelativeLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="main"/>
-
+        android:layout_below="@id/mainAppBarLay"
+        android:layout_centerInParent="true"
+        tools:layout_editor_absoluteX="8dp" />
 
 </RelativeLayout>

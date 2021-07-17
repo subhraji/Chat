@@ -4,22 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
-    <TextView
-        android:id="@+id/logout_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="logout"
-        android:textColor="#2196F3"
-        android:textSize="18dp"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="10dp"/>
     <fragment
         android:id="@+id/login_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_main"
-        android:layout_below="@+id/logout_btn"/>
+        app:navGraph="@navigation/nav_main"/>
 </RelativeLayout>

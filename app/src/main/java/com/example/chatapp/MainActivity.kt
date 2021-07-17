@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
+import android.view.WindowManager
 import com.example.chatapp.view.activity.LoginActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -13,6 +15,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        );
         setContentView(R.layout.activity_main)
 
 
@@ -23,18 +29,6 @@ class MainActivity : AppCompatActivity() {
         Log.i("accessToken","token =>"+accessToken)
 
 
-        logout_btn.setOnClickListener {
-            val editor = sharedPreference.edit()
-            editor.putString("accessToken","")
-            editor.putString("refreshToken","")
-            editor.putString("userId","")
-            editor.putBoolean("loginStatus",false)
-            editor.apply()
 
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-
-        }
     }
 }
