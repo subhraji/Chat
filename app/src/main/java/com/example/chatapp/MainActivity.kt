@@ -21,14 +21,9 @@ class MainActivity : AppCompatActivity() {
         );
         setContentView(R.layout.activity_main)
 
-
         val sharedPreference = getSharedPreferences("TOKEN_PREF",
             Context.MODE_PRIVATE)
         accessToken = sharedPreference.getString("accessToken","name").toString()
-
-        Log.i("accessToken","token =>"+accessToken)
-
-
 
     }
 }

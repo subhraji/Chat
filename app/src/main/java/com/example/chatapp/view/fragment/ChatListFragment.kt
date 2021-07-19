@@ -21,5 +21,4 @@ class ChatListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_chat_list, container, false)
     }
 
-
 }

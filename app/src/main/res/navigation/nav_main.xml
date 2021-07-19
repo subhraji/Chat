@@ -9,5 +9,14 @@
         android:id="@+id/mainFragment"
         android:name="com.example.chatapp.view.fragment.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_contactsListFragment"
+            app:destination="@id/contactsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactsListFragment"
+        android:name="com.example.chatapp.view.fragment.ContactsListFragment"
+        android:label="fragment_contacts_list"
+        tools:layout="@layout/fragment_contacts_list" />
 </navigation>

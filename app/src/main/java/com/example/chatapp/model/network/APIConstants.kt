@@ -1,5 +1,5 @@
 package com.example.chatapp.model.network
 
 object APIConstants {
-    var BASE_URL = "https://89c56576d45e.ngrok.io"
+    var BASE_URL = "https://252e50cbe9af.ngrok.io"
 }
