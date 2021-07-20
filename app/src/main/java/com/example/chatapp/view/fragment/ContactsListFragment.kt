@@ -1,24 +1,35 @@
 package com.example.chatapp.view.fragment
 
+import android.Manifest
+import android.content.ContentResolver
 import android.content.Context
+import android.content.pm.PackageManager
+import android.database.Cursor
+import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.os.bundleOf
+import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.fragment.app.Fragment
 import com.example.chatapp.R
+import com.example.chatapp.adapter.ContactListAdapter
+import com.example.chatapp.model.pojo.Contacts
+import com.example.chatapp.model.pojo.sync_contacts.User
 import com.example.chatapp.model.repo.Outcome
 import com.example.chatapp.viewmodel.SyncContactsViewModel
-import com.example.chatapp.viewmodel.VerifyOtpViewModel
-import kotlinx.android.synthetic.main.fragment_login_number.*
+import kotlinx.android.synthetic.main.fragment_contacts_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class ContactsListFragment : Fragment() {
     private val syncContactsViewModel: SyncContactsViewModel by viewModel()
     lateinit var accessToken: String
+    private val PERMISSIONS_REQUEST_READ_CONTACTS = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,15 +51,81 @@ class ContactsListFragment : Fragment() {
             Context.MODE_PRIVATE)
         accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
 
-        syncContacts()
+        //syncContacts("+918011299668")
+        loadContacts()
     }
 
-    private fun syncContacts(){
-        syncContactsViewModel.syncContacts("8011299668",accessToken).observe(viewLifecycleOwner, androidx.lifecycle.Observer { outcome->
+
+    private fun loadContacts() {
+        var builder = StringBuilder()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(requireActivity(),
+                Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.READ_CONTACTS),
+                PERMISSIONS_REQUEST_READ_CONTACTS)
+            //callback onRequestPermissionsResult
+        } else {
+           getContactList()
+            //listContacts.text = builder.toString()
+        }
+    }
+
+    var contactList: ArrayList<Contacts> = ArrayList()
+
+    private val PROJECTION = arrayOf(
+        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+        ContactsContract.Contacts.DISPLAY_NAME,
+        ContactsContract.CommonDataKinds.Phone.NUMBER
+    )
+    private fun getContactList() {
+        val cr: ContentResolver = requireActivity().contentResolver
+        val cursor: Cursor? = cr.query(
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            PROJECTION,
+            null,
+            null,
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
+        )
+        if (cursor != null) {
+            val mobileNoSet = HashSet<String>()
+            try {
+                val nameIndex: Int = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+                val numberIndex: Int =
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                var name: String
+                var number: String
+                while (cursor.moveToNext()) {
+                    name = cursor.getString(nameIndex)
+                    number = cursor.getString(numberIndex)
+                    number = number.replace(" ", "")
+                    if (!mobileNoSet.contains(number)) {
+                        contactList.add(Contacts(name, number))
+                        mobileNoSet.add(number)
+                        Log.d(
+                            "hvy", "onCreaterrView  Phone Number: name = " + name
+                                    + " No = " + number
+                        )
+                        contactList.forEach {
+                            syncContacts(number)
+                        }
+                    }
+                }
+            } finally {
+                cursor.close()
+            }
+        }
+    }
+
+    private fun syncContacts(phoneno: String){
+        syncContactsViewModel.syncContacts(phoneno.takeLast(10),accessToken).observe(viewLifecycleOwner, androidx.lifecycle.Observer { outcome->
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){
                         Toast.makeText(activity,outcome.data.user.phoneno, Toast.LENGTH_SHORT).show()
+                        val user = outcome.data.user
+                        val userList = listOf<User>(user)
+                        contactListRecycler.adapter = ContactListAdapter(userList)
+
                     }else{
                         Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
                     }
@@ -62,5 +139,16 @@ class ContactsListFragment : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                loadContacts()
+            } else {
+                //  toast("Permission must be granted in order to display contacts information")
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragment.ContactsListFragment">
     <TextView
         android:id="@+id/contacts_view_txt"
@@ -13,16 +14,18 @@
         android:textSize="24dp"
         android:layout_margin="20dp"/>
     <View
-        android:id="@+id/view"
+        android:id="@+id/contact_list_view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#C8C8C8"
         android:layout_below="@+id/contacts_view_txt"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/contactsRecycler"
+        android:id="@+id/contactListRecycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:layout_below="@+id/view"/>
+        tools:listitem="@layout/contact_list_item"
+        tools:itemCount="3"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contact_list_view"/>
 
 </RelativeLayout>
