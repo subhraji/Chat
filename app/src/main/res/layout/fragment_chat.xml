@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".view.fragment.ChatFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/controlLayout"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="0dp"
+        tools:listitem="@layout/item_chat_me"/>
+
+    <LinearLayout
+        android:id="@+id/controlLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#fcfcfc"
+        android:padding="12dp"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:id="@+id/inputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="41dp">
+
+            <ImageView
+                android:id="@+id/cameraBtn"
+                android:layout_width="41dp"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_chat_add_image" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="41dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_toStartOf="@+id/chat_btnSend"
+                android:layout_toEndOf="@+id/cameraBtn"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="0dp">
+
+                <EditText
+                    android:id="@+id/textInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#F6F6F6"
+                    android:hint="Type Your Message ..."
+                    android:inputType="textMultiLine"
+                    android:paddingStart="18dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="18dp"
+                    android:paddingBottom="4dp"
+                    android:textSize="12dp" />
+
+            </androidx.cardview.widget.CardView>
+
+
+            <ImageView
+                android:id="@+id/chat_btnSend"
+                android:layout_width="41dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_send_message"
+                app:tint="@color/purple_700" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>

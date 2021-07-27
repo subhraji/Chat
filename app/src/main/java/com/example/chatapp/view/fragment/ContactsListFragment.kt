@@ -51,8 +51,8 @@ class ContactsListFragment : Fragment() {
             Context.MODE_PRIVATE)
         accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
 
-        //syncContacts("+918011299668")
         loadContacts()
+        syncContacts("+917002838640")
     }
 
 
@@ -105,9 +105,9 @@ class ContactsListFragment : Fragment() {
                             "hvy", "onCreaterrView  Phone Number: name = " + name
                                     + " No = " + number
                         )
-                        contactList.forEach {
+                        /*contactList.forEach {
                             syncContacts(number)
-                        }
+                        }*/
                     }
                 }
             } finally {
@@ -121,11 +121,9 @@ class ContactsListFragment : Fragment() {
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){
-                        Toast.makeText(activity,outcome.data.user.phoneno, Toast.LENGTH_SHORT).show()
                         val user = outcome.data.user
                         val userList = listOf<User>(user)
-                        contactListRecycler.adapter = ContactListAdapter(userList)
-
+                        contactListRecycler.adapter = ContactListAdapter(userList,requireActivity())
                     }else{
                         Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
                     }
@@ -147,7 +145,7 @@ class ContactsListFragment : Fragment() {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 loadContacts()
             } else {
-                //  toast("Permission must be granted in order to display contacts information")
+                Toast.makeText(activity,"Permission must be granted in order to display contacts information",Toast.LENGTH_SHORT).show()
             }
         }
     }

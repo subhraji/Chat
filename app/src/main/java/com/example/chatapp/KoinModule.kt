@@ -8,6 +8,7 @@ import com.example.chatapp.model.repo.sync_contacts.SyncContactsRepository
 import com.example.chatapp.model.repo.sync_contacts.SyncContactsRepositoryImpl
 import com.example.chatapp.model.repo.verify_otp.VerifyOtpRepository
 import com.example.chatapp.model.repo.verify_otp.VerifyOtpRepositoryImpl
+import com.example.chatapp.viewmodel.FriendChatViewModel
 import com.example.chatapp.viewmodel.SyncContactsViewModel
 import com.example.chatapp.viewmodel.VerifyOtpViewModel
 
@@ -21,5 +22,7 @@ val appModule = module {
 
     single<SyncContactsRepository> { SyncContactsRepositoryImpl(get()) }
     viewModel { SyncContactsViewModel(get()) }
+
+    viewModel { FriendChatViewModel(get()) }
 
 }

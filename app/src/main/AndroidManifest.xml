@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
         <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
         <activity android:name=".view.activity.LoginActivity"

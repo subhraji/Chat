@@ -1,10 +1,13 @@
 package com.example.chatapp.helper
+import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.Build
+import android.view.*
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import com.example.chatapp.R
 import java.util.*
 
@@ -24,4 +27,39 @@ fun Context.isConnectedToInternet(): Boolean {
 
 fun ViewGroup.inflate(layoutRes: Int, attachToRoot: Boolean = false): View {
     return LayoutInflater.from(this.context).inflate(layoutRes, this, attachToRoot)
+}
+fun Context.isTablet(): Boolean {
+    return false
+}
+fun Activity.transparentStatusBar() {
+    if (!isTablet()) {
+        /*this.window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)*/
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+            window.statusBarColor = ContextCompat.getColor(this, R.color.purple_700)
+        } else {
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+
+        }
+    }
+}
+fun Window.removeStatusBar() {
+
+    if (this.context.isTablet()) {
+        this.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    }
+
+}
+
+fun Activity.hideSoftKeyboard() {
+    val inputMethodManager = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    if (inputMethodManager.isActive) {
+        if (this.currentFocus != null) {
+            inputMethodManager.hideSoftInputFromWindow(this.currentFocus!!.windowToken, 0)
+        }
+    }
 }

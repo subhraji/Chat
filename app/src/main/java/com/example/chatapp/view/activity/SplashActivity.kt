@@ -8,17 +8,13 @@ import android.os.Handler
 import android.view.WindowManager
 import com.example.chatapp.MainActivity
 import com.example.chatapp.R
+import com.example.chatapp.helper.transparentStatusBar
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        transparentStatusBar()
         setContentView(R.layout.activity_splash)
-
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
-
         Handler().postDelayed({
 
             val sharedPreference = getSharedPreferences("TOKEN_PREF",

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="end"
+    android:orientation="vertical"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="8dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Me"
+        android:layout_marginEnd="7dp"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_chat_date_me" />
+
+    <TextView
+        android:id="@+id/text_chat_date_me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:text="June 10"
+        android:visibility="gone"
+        android:textColor="#C0C0C0"/>
+
+    <LinearLayout
+        android:id="@+id/card_chat_message_me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_chat_me_bg"
+        android:orientation="vertical"
+        android:padding="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_chat_date_me">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/chat_img_view_me"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            />
+
+        <TextView
+            android:id="@+id/text_chat_message_me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="260dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:text="This is a Message"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_chat_timestamp_me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="10:00"
+            android:textColor="#C0C0C0"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
