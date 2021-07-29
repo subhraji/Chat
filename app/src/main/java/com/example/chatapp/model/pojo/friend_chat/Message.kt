@@ -16,4 +16,7 @@ data class Message(
         val createdAt: Long,
         @SerializedName("userId")
         val userId: String
-)
+){
+        var isSender = false
+        var messageType = "text"
+}

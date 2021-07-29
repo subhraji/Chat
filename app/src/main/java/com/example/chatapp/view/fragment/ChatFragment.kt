@@ -9,10 +9,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
+import com.example.chatapp.adapter.ContactListAdapter
+import com.example.chatapp.adapter.MessageListAdapter
+import com.example.chatapp.adapter.TestMessageListAdapter
+import com.example.chatapp.helper.PaginationUtils
+import com.example.chatapp.helper.PagingListener
 import com.example.chatapp.helper.SocketHelper
 import com.example.chatapp.helper.hideSoftKeyboard
+import com.example.chatapp.model.pojo.sync_contacts.User
 import com.example.chatapp.viewmodel.FriendChatViewModel
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Ack
@@ -20,6 +29,11 @@ import com.github.nkzawa.socketio.client.Socket
 import com.google.gson.Gson
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.fragment_chat.*
+import kotlinx.android.synthetic.main.fragment_contacts_list.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -31,6 +45,10 @@ class ChatFragment : Fragment() {
     lateinit var accessToken: String
     lateinit var userId: String
     private val chatViewModel: FriendChatViewModel by viewModel()
+    private lateinit var mMessageAdapter: MessageListAdapter
+    private var size = 0
+    private var page = 1
+    private var rowPerPage = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,9 +72,12 @@ class ChatFragment : Fragment() {
             Context.MODE_PRIVATE)
         accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
 
+        mMessageAdapter = MessageListAdapter(mutableListOf(), requireActivity().supportFragmentManager)
+        chat_recycler.apply {
+            adapter = mMessageAdapter
+        }
         Log.i("userId",userId)
         initSocket()
-
 
         PushDownAnim.setPushDownAnimTo(cameraBtn).setOnClickListener {
 
@@ -65,6 +86,12 @@ class ChatFragment : Fragment() {
             sendMessage()
         }
 
+        CoroutineScope(Dispatchers.IO).launch {
+            size = chatViewModel.getMessageCount(userId!!)
+            withContext(Dispatchers.Main) {
+                getChatMessage()
+            }
+        }
     }
 
     private fun initSocket() {
@@ -90,6 +117,8 @@ class ChatFragment : Fragment() {
                 val messageData = data.getJSONObject("data")
                 val message = Gson().fromJson(messageData.toString(), Message::class.java)
                 if (message.userId == userId) {
+
+                    mMessageAdapter.addMessage(message)
                     saveMessage(message)
                 }
             } catch (e: JSONException) {
@@ -98,7 +127,6 @@ class ChatFragment : Fragment() {
             }
         }
     }
-
 
 
     private fun sendMessage() {
@@ -114,12 +142,14 @@ class ChatFragment : Fragment() {
         val message = com.eduaid.child.models.pojo.friend_chat.Message(
             msgUuid,
             messageText,
-            null,
+            "",
             currentThreadTimeMillis,
             userId
         )
-        //message.isSender = true
-        //message.messageType = "text"
+        message.isSender = true
+        message.messageType = "text"
+
+        mMessageAdapter.addMessage(message)
         saveMessage(message)
 
         Log.d("emitting send message","emitting send message")
@@ -127,10 +157,9 @@ class ChatFragment : Fragment() {
             msgUuid,
             messageText,
             currentThreadTimeMillis,
-            null,
+            "",
             userId
         )
-
         textInput.setText("")
         requireActivity().hideSoftKeyboard()
     }
@@ -158,6 +187,19 @@ class ChatFragment : Fragment() {
     }
 
     private fun saveMessage(message: Message) {
+        chat_recycler.scrollToPosition(mMessageAdapter.itemCount - 1)
         chatViewModel.saveMessage(message)
     }
+
+    private fun getChatMessage(){
+        chatViewModel.getChatMessages(userId).observe(requireActivity(), { messages ->
+            Log.d("msgSize","msg list size = ${messages.size}")
+            if (!messages.isNullOrEmpty()) {
+                mMessageAdapter.addAllMessages(messages)
+            } else {
+                Log.d("msgSize","msg list size => ${messages.size}")
+            }
+        })
+    }
+
 }

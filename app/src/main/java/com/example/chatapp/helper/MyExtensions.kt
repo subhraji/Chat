@@ -2,13 +2,18 @@ package com.example.chatapp.helper
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.example.chatapp.R
+import java.net.URL
 import java.util.*
 
 fun Context.showErrorMsg(): String {
@@ -28,9 +33,11 @@ fun Context.isConnectedToInternet(): Boolean {
 fun ViewGroup.inflate(layoutRes: Int, attachToRoot: Boolean = false): View {
     return LayoutInflater.from(this.context).inflate(layoutRes, this, attachToRoot)
 }
+
 fun Context.isTablet(): Boolean {
     return false
 }
+
 fun Activity.transparentStatusBar() {
     if (!isTablet()) {
         /*this.window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)*/
@@ -63,3 +70,24 @@ fun Activity.hideSoftKeyboard() {
         }
     }
 }
+
+
+fun View.visible() {
+    this.visibility = View.VISIBLE
+}
+
+fun View.invisible() {
+    this.visibility = View.INVISIBLE
+}
+
+fun View.gone() {
+    this.visibility = View.GONE
+}
+
+/*
+fun ImageView.loadImg(path: Any, context: Context, placeholder: Drawable? = null) {
+    GlideApp.with(context)
+        .load(path)
+        .placeholder(placeholder)
+        .into(this)
+}*/
