@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.example.chatapp.R
 import com.example.chatapp.adapter.ChatUserAdapter
 import com.example.chatapp.adapter.ContactListAdapter
+import com.example.chatapp.adapter.MessageListAdapter
 import com.example.chatapp.model.pojo.chat_user.ChatUser
 import com.example.chatapp.model.pojo.sync_contacts.User
 import com.example.chatapp.viewmodel.ChatUserViewModel
@@ -25,6 +26,7 @@ class ChatListFragment : Fragment() {
     private val chatUserViewModel: ChatUserViewModel by viewModel()
     lateinit var userId: String
     private var size = 0
+    private lateinit var mChatUserAdapter: ChatUserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,14 +43,18 @@ class ChatListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mChatUserAdapter = ChatUserAdapter(mutableListOf(), requireActivity())
 
-        CoroutineScope(Dispatchers.IO).launch {
+        getChatUser()
+
+        /*CoroutineScope(Dispatchers.IO).launch {
             //size = chatUserViewModel.getChatUserCount()
             withContext(Dispatchers.Main) {
                 getChatUser()
             }
-        }
+        }*/
     }
+
 
     private fun getChatUser(){
         chatUserViewModel.getChatUser().observe(requireActivity(), { users ->

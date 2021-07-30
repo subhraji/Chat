@@ -28,10 +28,10 @@ class ChatUserAdapter(private val chatUserList: List<ChatUser>, private val cont
             chat_user_name_txt.text = users.userName
             chat_user_msg_txt.text = users.message
 
-            /*chatUserListItemRootLay.setOnClickListener {
+            chatUserListItemRootLay.setOnClickListener {
                 val bundle = bundleOf("userId" to users.userId)
                 findNavController().navigate(R.id.chatFragment, bundle)
-            }*/
+            }
         }
 
     }
