@@ -1,7 +1,5 @@
 package com.eduaid.child.models.db.room.chat
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.model.db.room.BaseDao

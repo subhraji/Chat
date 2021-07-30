@@ -21,7 +21,9 @@ import com.example.chatapp.helper.PaginationUtils
 import com.example.chatapp.helper.PagingListener
 import com.example.chatapp.helper.SocketHelper
 import com.example.chatapp.helper.hideSoftKeyboard
+import com.example.chatapp.model.pojo.chat_user.ChatUser
 import com.example.chatapp.model.pojo.sync_contacts.User
+import com.example.chatapp.viewmodel.ChatUserViewModel
 import com.example.chatapp.viewmodel.FriendChatViewModel
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Ack
@@ -45,6 +47,7 @@ class ChatFragment : Fragment() {
     lateinit var accessToken: String
     lateinit var userId: String
     private val chatViewModel: FriendChatViewModel by viewModel()
+    private val chatUserViewModel: ChatUserViewModel by viewModel()
     private lateinit var mMessageAdapter: MessageListAdapter
     private var size = 0
     private var page = 1
@@ -80,8 +83,8 @@ class ChatFragment : Fragment() {
         initSocket()
 
         PushDownAnim.setPushDownAnimTo(cameraBtn).setOnClickListener {
-
         }
+
         PushDownAnim.setPushDownAnimTo(chat_btnSend).setOnClickListener {
             sendMessage()
         }
@@ -120,6 +123,17 @@ class ChatFragment : Fragment() {
 
                     mMessageAdapter.addMessage(message)
                     saveMessage(message)
+
+                    /*chat user save*/
+                    val chatUser = ChatUser(
+                        message.userId,
+                        "unknown",
+                        message.message,
+                        "",
+                        message.createdAt
+                    )
+                    saveChatUser(chatUser)
+
                 }
             } catch (e: JSONException) {
                 Log.d("Socket_connected","exception -> ${e.message}")
@@ -151,6 +165,16 @@ class ChatFragment : Fragment() {
 
         mMessageAdapter.addMessage(message)
         saveMessage(message)
+
+        /*chat user save*/
+        val chatUser = ChatUser(
+            userId,
+            "unknown",
+            messageText,
+            "",
+            currentThreadTimeMillis
+        )
+        saveChatUser(chatUser)
 
         Log.d("emitting send message","emitting send message")
         emitMessage(
@@ -200,6 +224,10 @@ class ChatFragment : Fragment() {
                 Log.d("msgSize","msg list size => ${messages.size}")
             }
         })
+    }
+
+    private fun saveChatUser(chatUser: ChatUser) {
+        chatUserViewModel.saveChatUser(chatUser)
     }
 
 }
