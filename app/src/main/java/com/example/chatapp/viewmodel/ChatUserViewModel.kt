@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.liveData
+import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.model.db.room.chat_user.ChatUserDatabase
 import com.example.chatapp.model.pojo.chat_user.ChatUser
 import kotlinx.coroutines.CoroutineScope
@@ -27,4 +28,15 @@ class ChatUserViewModel(application: Application): AndroidViewModel(application)
     suspend fun getChatUserCount(): Int {
         return db.chatUserDao.getChatUserCount()
     }
+
+    suspend fun isChatUserAvailable(userId: String): Int {
+        return db.chatUserDao.isChatUserAvailable(userId)
+    }
+
+    fun updateChatUser(chatUser: ChatUser){
+        CoroutineScope(Dispatchers.IO).launch {
+            db.chatUserDao.update(chatUser)
+        }
+    }
+
 }

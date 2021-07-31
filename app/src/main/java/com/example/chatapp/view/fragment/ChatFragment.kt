@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.eduaid.child.models.pojo.friend_chat.Message
@@ -50,6 +52,7 @@ class ChatFragment : Fragment() {
     private val chatUserViewModel: ChatUserViewModel by viewModel()
     private lateinit var mMessageAdapter: MessageListAdapter
     private var size = 0
+    private var chatUserSize = 0
     private var page = 1
     private var rowPerPage = 10
 
@@ -91,10 +94,13 @@ class ChatFragment : Fragment() {
 
         CoroutineScope(Dispatchers.IO).launch {
             size = chatViewModel.getMessageCount(userId!!)
+            chatUserSize = chatUserViewModel.isChatUserAvailable(userId!!)
             withContext(Dispatchers.Main) {
                 getChatMessage()
             }
         }
+
+
     }
 
     private fun initSocket() {
@@ -132,8 +138,11 @@ class ChatFragment : Fragment() {
                         "",
                         message.createdAt
                     )
-                    saveChatUser(chatUser)
-
+                    if(chatUserSize>0){
+                        updateChatUser(chatUser)
+                    }else{
+                        saveChatUser(chatUser)
+                    }
                 }
             } catch (e: JSONException) {
                 Log.d("Socket_connected","exception -> ${e.message}")
@@ -174,7 +183,11 @@ class ChatFragment : Fragment() {
             "",
             currentThreadTimeMillis
         )
-        saveChatUser(chatUser)
+        if(chatUserSize != 0){
+            updateChatUser(chatUser)
+        }else{
+            saveChatUser(chatUser)
+        }
 
         Log.d("emitting send message","emitting send message")
         emitMessage(
@@ -226,8 +239,13 @@ class ChatFragment : Fragment() {
         })
     }
 
+
+
     private fun saveChatUser(chatUser: ChatUser) {
         chatUserViewModel.saveChatUser(chatUser)
     }
 
+    private fun updateChatUser(chatUser: ChatUser) {
+        chatUserViewModel.updateChatUser(chatUser)
+    }
 }

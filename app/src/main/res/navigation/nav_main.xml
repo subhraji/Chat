@@ -12,16 +12,26 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_contactsListFragment"
-            app:destination="@id/contactsListFragment" />
+            app:destination="@id/contactsListFragment"
+            app:popUpTo="@+id/mainFragment"
+            />
+        <action
+            android:id="@+id/action_mainFragment_to_chatFragment"
+            app:destination="@id/chatFragment"
+            app:popUpTo="@+id/mainFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/contactsListFragment"
         android:name="com.example.chatapp.view.fragment.ContactsListFragment"
         android:label="fragment_contacts_list"
-        tools:layout="@layout/fragment_contacts_list" >
+        tools:layout="@layout/fragment_contacts_list"
+        >
         <action
             android:id="@+id/action_contactsListFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
+            app:destination="@id/chatFragment"
+            app:popUpTo="@+id/mainFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"

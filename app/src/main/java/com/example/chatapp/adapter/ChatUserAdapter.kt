@@ -30,7 +30,7 @@ class ChatUserAdapter(private val chatUserList: List<ChatUser>, private val cont
 
             chatUserListItemRootLay.setOnClickListener {
                 val bundle = bundleOf("userId" to users.userId)
-                findNavController().navigate(R.id.chatFragment, bundle)
+                findNavController().navigate(R.id.action_mainFragment_to_chatFragment, bundle)
             }
         }
 

@@ -36,7 +36,8 @@ class ContactListAdapter(private val userList: List<User>, private val context: 
 
             contactListItemRootLay.setOnClickListener {
                 val bundle = bundleOf("userId" to users.id)
-                findNavController().navigate(R.id.chatFragment, bundle)            }
+                findNavController().navigate(R.id.action_contactsListFragment_to_chatFragment, bundle)
+            }
         }
     }
 }

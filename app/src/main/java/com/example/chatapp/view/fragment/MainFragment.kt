@@ -40,7 +40,7 @@ class MainFragment : Fragment() {
         tabLayout.addTab(tabLayout.newTab().setText("Group"))
 
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
-        val adapter = ViewPagerAdapter(requireActivity(), requireActivity().supportFragmentManager,
+        val adapter = ViewPagerAdapter(requireActivity(), childFragmentManager,
             tabLayout.tabCount)
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
@@ -71,7 +71,7 @@ class MainFragment : Fragment() {
         }
 
         contacts_img.setOnClickListener {
-            findNavController().navigate(R.id.contactsListFragment)
+            findNavController().navigate(R.id.action_mainFragment_to_contactsListFragment)
         }
 
         super.onViewCreated(view, savedInstanceState)

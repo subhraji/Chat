@@ -45,14 +45,13 @@ class ChatListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mChatUserAdapter = ChatUserAdapter(mutableListOf(), requireActivity())
 
-        getChatUser()
-
-        /*CoroutineScope(Dispatchers.IO).launch {
-            //size = chatUserViewModel.getChatUserCount()
+        CoroutineScope(Dispatchers.IO).launch {
+            size = chatUserViewModel.getChatUserCount()
+            Log.d("list_size","list size => ${size}")
             withContext(Dispatchers.Main) {
                 getChatUser()
             }
-        }*/
+        }
     }
 
 
