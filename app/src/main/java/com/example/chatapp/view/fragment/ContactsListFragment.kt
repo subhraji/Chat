@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.example.chatapp.R
 import com.example.chatapp.adapter.ContactListAdapter
+import com.example.chatapp.helper.loadingDialog
 import com.example.chatapp.model.pojo.Contacts
 import com.example.chatapp.model.pojo.sync_contacts.User
 import com.example.chatapp.model.repo.Outcome
@@ -117,7 +118,10 @@ class ContactsListFragment : Fragment() {
     }
 
     private fun syncContacts(phoneno: String){
+        val loader = requireActivity().loadingDialog()
+        loader.show()
         syncContactsViewModel.syncContacts(phoneno.takeLast(10),accessToken).observe(viewLifecycleOwner, androidx.lifecycle.Observer { outcome->
+            loader.dismiss()
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){

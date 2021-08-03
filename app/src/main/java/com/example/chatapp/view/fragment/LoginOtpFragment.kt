@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.chatapp.MainActivity
 import com.example.chatapp.R
+import com.example.chatapp.helper.loadingDialog
 import com.example.chatapp.model.repo.Outcome
 import com.example.chatapp.viewmodel.VerifyOtpViewModel
 import kotlinx.android.synthetic.main.fragment_login_number.*
@@ -45,7 +46,10 @@ class LoginOtpFragment : Fragment() {
 
 
         verify_otp_btn.setOnClickListener {
+            val loader = requireActivity().loadingDialog()
+            loader.show()
             verifyOtpViewModel.verifyOtp(phoneno.toString(), otp_txt.text.toString()).observe(viewLifecycleOwner, androidx.lifecycle.Observer { outcome->
+                loader.dismiss()
                 when(outcome){
                     is Outcome.Success ->{
                         if(outcome.data.status =="success"){

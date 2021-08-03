@@ -82,7 +82,7 @@ class ChatFragment : Fragment() {
         chat_recycler.apply {
             adapter = mMessageAdapter
         }
-        Log.i("userId",userId)
+
         initSocket()
 
         PushDownAnim.setPushDownAnimTo(cameraBtn).setOnClickListener {
@@ -122,7 +122,7 @@ class ChatFragment : Fragment() {
             val data = it[0] as JSONObject
             try {
                 Log.d("data", "data => $data")
-                val isPending = data.getBoolean("isPending")
+                //val isPending = data.getBoolean("isPending")
                 val messageData = data.getJSONObject("data")
                 val message = Gson().fromJson(messageData.toString(), Message::class.java)
                 if (message.userId == userId) {
@@ -238,7 +238,6 @@ class ChatFragment : Fragment() {
             }
         })
     }
-
 
 
     private fun saveChatUser(chatUser: ChatUser) {
