@@ -48,6 +48,7 @@ class ChatFragment : Fragment() {
     private var mSocket: Socket? = null
     lateinit var accessToken: String
     lateinit var userId: String
+    lateinit var friendsPhoneno: String
     private val chatViewModel: FriendChatViewModel by viewModel()
     private val chatUserViewModel: ChatUserViewModel by viewModel()
     private lateinit var mMessageAdapter: MessageListAdapter
@@ -60,6 +61,8 @@ class ChatFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             userId = it.getString(USER_ID).toString()
+            friendsPhoneno = it.getString("phoneno").toString()
+
         }
     }
 
@@ -125,24 +128,31 @@ class ChatFragment : Fragment() {
                 //val isPending = data.getBoolean("isPending")
                 val messageData = data.getJSONObject("data")
                 val message = Gson().fromJson(messageData.toString(), Message::class.java)
-                if (message.userId == userId) {
+                if (message.sentBy.id == userId) {
 
                     mMessageAdapter.addMessage(message)
                     saveMessage(message)
 
                     /*chat user save*/
                     val chatUser = ChatUser(
-                        message.userId,
-                        "unknown",
-                        message.message,
+                        message.sentBy.id,
+                        message.sentBy.phoneno,
+                        message.msg,
                         "",
-                        message.createdAt
+                        message.sentOn
                     )
-                    if(chatUserSize>0){
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        chatUserSize = chatUserViewModel.isChatUserAvailable(message.sentBy.id)
+                        Log.i("chatUserSize", "chat use size => ${chatUserSize}")
+                    }
+
+                    if(chatUserSize != 0){
                         updateChatUser(chatUser)
                     }else{
                         saveChatUser(chatUser)
                     }
+
                 }
             } catch (e: JSONException) {
                 Log.d("Socket_connected","exception -> ${e.message}")
@@ -166,8 +176,8 @@ class ChatFragment : Fragment() {
             msgUuid,
             messageText,
             "",
+            com.example.chatapp.model.pojo.friend_chat.User(userId,"911"),
             currentThreadTimeMillis,
-            userId
         )
         message.isSender = true
         message.messageType = "text"
@@ -178,7 +188,7 @@ class ChatFragment : Fragment() {
         /*chat user save*/
         val chatUser = ChatUser(
             userId,
-            "unknown",
+            friendsPhoneno,
             messageText,
             "",
             currentThreadTimeMillis
@@ -247,4 +257,12 @@ class ChatFragment : Fragment() {
     private fun updateChatUser(chatUser: ChatUser) {
         chatUserViewModel.updateChatUser(chatUser)
     }
+
+    /*override fun onDestroy() {
+        super.onDestroy()
+        mSocket?.let { socket ->
+            socket.off("chat message", chatMessageListener)
+        }
+        mSocket?.disconnect()
+    }*/
 }

@@ -7,7 +7,7 @@ import com.example.chatapp.model.db.room.BaseDao
 @Dao
 interface FriendChatDao: BaseDao<Message> {
 
-    @Query("Select * from message where userId = :friendId order by createdAt")
+    @Query("Select * from message where friend_id = :friendId order by sentOn")
     suspend fun getChatMessages(friendId: String): List<Message>
 
     /*@Query("Update message set isSent=:isSent where msgUuid =:msgUuid")
@@ -16,6 +16,7 @@ interface FriendChatDao: BaseDao<Message> {
     /*@Query("Select * from message where isSent=:isSent")
     suspend fun getUnsentMessages(isSent:Boolean): List<Message>*/
 
-    @Query("Select count(*) from message where userId=:friendId")
+    @Query("Select count(*) from message where friend_id=:friendId")
     suspend fun getChatMessageCount(friendId: String): Int
+
 }

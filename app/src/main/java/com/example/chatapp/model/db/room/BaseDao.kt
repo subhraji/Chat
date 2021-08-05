@@ -28,7 +28,7 @@ interface BaseDao<T> {
      *
      * @param obj the object to be updated
      */
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(obj: T)
 
     /**

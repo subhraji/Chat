@@ -96,33 +96,41 @@ class ChatListFragment : Fragment() {
             val data = it[0] as JSONObject
             try {
                 Log.d("data", "data => $data")
-                val isPending = data.getBoolean("isPending")
+                //val isPending = data.getBoolean("isPending")
                 val messageData = data.getJSONObject("data")
                 val message = Gson().fromJson(messageData.toString(), Message::class.java)
+
+                if(message!=null){
 
                     saveMessage(message)
 
                     /*chat user save*/
-                val chatUser = ChatUser(
-                    message.userId,
-                    "unknown",
-                    message.message,
-                    "",
-                    message.createdAt
-                )
+                    val chatUser = ChatUser(
+                        message.sentBy.id,
+                        message.sentBy.phoneno,
+                        message.msg,
+                        "",
+                        message.sentOn
+                    )
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    chatUserSize = chatUserViewModel.isChatUserAvailable(message.userId)
-                    Log.i("chatUserSize", "chat use size => ${chatUserSize}")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        chatUserSize = chatUserViewModel.isChatUserAvailable(message.sentBy.id)
+                        Log.i("chatUserSize", "chat use size => ${chatUserSize}")
+                        withContext(Dispatchers.Main) {
+                            if(chatUserSize == 1){
+                                Log.d("check","reached here")
+                                updateChatUser(chatUser)
+                                getChatUser()
+                            }else{
+                                Log.d("check","reached here too => ${chatUserSize}")
+                                saveChatUser(chatUser)
+                                getChatUser()
+                            }                        }
+                    }
+
+
                 }
 
-                if(chatUserSize>0){
-                        updateChatUser(chatUser)
-                        getChatUser()
-                    }else{
-                        saveChatUser(chatUser)
-                        getChatUser()
-                    }
 
             } catch (e: JSONException) {
                 Log.d("Socket_connected","exception -> ${e.message}")
@@ -132,6 +140,7 @@ class ChatListFragment : Fragment() {
     }
 
     private fun saveMessage(message: Message) {
+        Log.i("saveMessage", message.msg)
         chatViewModel.saveMessage(message)
     }
 
@@ -150,7 +159,23 @@ class ChatListFragment : Fragment() {
         chatUserViewModel.saveChatUser(chatUser)
     }
 
+    private fun deleteChatUser(chatUser: ChatUser) {
+        chatUserViewModel.deleteChatUser(chatUser)
+    }
+
     private fun updateChatUser(chatUser: ChatUser) {
         chatUserViewModel.updateChatUser(chatUser)
     }
+
+    private suspend fun updateChatUser2(message: String, userId: String) {
+        chatUserViewModel.updateChatUser2(message, userId)
+    }
+
+    /*override fun onDestroy() {
+        super.onDestroy()
+        mSocket?.let { socket ->
+            socket.off("chat message", chatMessageListener)
+        }
+        mSocket?.disconnect()
+    }*/
 }

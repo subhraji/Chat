@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
+
     <fragment
         android:id="@+id/login_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -13,4 +14,5 @@
         android:layout_height="match_parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_main"/>
+
 </RelativeLayout>

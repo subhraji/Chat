@@ -91,13 +91,13 @@ class MessageListAdapter(private val messageList: MutableList<Message>, private 
         val dateText: TextView = itemView.findViewById(R.id.text_chat_date_me)
 
         fun bind(message: Message, context: Context, fragmentManager: FragmentManager) {
-            if(message.message == ""){
+            if(message.msg == ""){
                 messageText.gone()
             }else{
                 messageText.visible()
             }
 
-            messageText.text = message.message
+            messageText.text = message.msg
             if (message.image != null) {
                 if (message.messageType == "image") {
                     messageImg.visible()
@@ -115,7 +115,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>, private 
                 messageImg.gone()
             }
 
-            val date = Date(message.createdAt)
+            val date = Date(message.sentOn)
             // Format the stored timestamp into a readable String using method.
             timeText.text = "20"
             dateText.text = "20"
@@ -132,13 +132,13 @@ class MessageListAdapter(private val messageList: MutableList<Message>, private 
         val dateText: TextView = itemView.findViewById(R.id.text_chat_date_other)
 
         fun bind(message: Message, context: Context, fragmentManager: FragmentManager) {
-            if (message.message == "") {
+            if (message.msg == "") {
                 messageText.gone()
             } else {
                 messageText.visible()
             }
-            messageText.text = message.message
-            val date = Date(message.createdAt)
+            messageText.text = message.msg
+            val date = Date(message.sentOn)
             // Format the stored timestamp into a readable String using method.
             timeText.text = "time"
             dateText.text = "date"
