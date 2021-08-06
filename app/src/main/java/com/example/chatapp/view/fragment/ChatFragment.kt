@@ -134,23 +134,27 @@ class ChatFragment : Fragment() {
                     saveMessage(message)
 
                     /*chat user save*/
-                    val chatUser = ChatUser(
-                        message.sentBy.id,
-                        message.sentBy.phoneno,
-                        message.msg,
-                        "",
-                        message.sentOn
-                    )
-
                     CoroutineScope(Dispatchers.IO).launch {
                         chatUserSize = chatUserViewModel.isChatUserAvailable(message.sentBy.id)
                         Log.i("chatUserSize", "chat use size => ${chatUserSize}")
-                    }
+                        withContext(Dispatchers.Main) {
 
-                    if(chatUserSize != 0){
-                        updateChatUser(chatUser)
-                    }else{
-                        saveChatUser(chatUser)
+                            val chatUser = ChatUser(
+                                message.sentBy.id,
+                                message.sentBy.phoneno,
+                                message.msg,
+                                "",
+                                message.sentOn
+                            )
+
+                            if(chatUserSize == 0){
+                                updateChatUser(chatUser)
+                            }else{
+                                saveChatUser(chatUser)
+                            }
+
+                        }
+
                     }
 
                 }
@@ -176,7 +180,7 @@ class ChatFragment : Fragment() {
             msgUuid,
             messageText,
             "",
-            com.example.chatapp.model.pojo.friend_chat.User(userId,"911"),
+            com.example.chatapp.model.pojo.friend_chat.User(userId,friendsPhoneno),
             currentThreadTimeMillis,
         )
         message.isSender = true
@@ -258,11 +262,11 @@ class ChatFragment : Fragment() {
         chatUserViewModel.updateChatUser(chatUser)
     }
 
-    /*override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         mSocket?.let { socket ->
             socket.off("chat message", chatMessageListener)
         }
         mSocket?.disconnect()
-    }*/
+    }
 }

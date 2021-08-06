@@ -105,27 +105,37 @@ class ChatListFragment : Fragment() {
                     saveMessage(message)
 
                     /*chat user save*/
-                    val chatUser = ChatUser(
-                        message.sentBy.id,
-                        message.sentBy.phoneno,
-                        message.msg,
-                        "",
-                        message.sentOn
-                    )
+
 
                     CoroutineScope(Dispatchers.IO).launch {
                         chatUserSize = chatUserViewModel.isChatUserAvailable(message.sentBy.id)
                         Log.i("chatUserSize", "chat use size => ${chatUserSize}")
+
                         withContext(Dispatchers.Main) {
+
+                            val chatUser = ChatUser(
+                                message.sentBy.id,
+                                message.sentBy.phoneno,
+                                message.msg,
+                                "",
+                                message.sentOn
+                            )
+
+
                             if(chatUserSize == 1){
                                 Log.d("check","reached here")
                                 updateChatUser(chatUser)
                                 getChatUser()
+
+
                             }else{
                                 Log.d("check","reached here too => ${chatUserSize}")
                                 saveChatUser(chatUser)
                                 getChatUser()
-                            }                        }
+                            }
+
+
+                        }
                     }
 
 
@@ -148,7 +158,12 @@ class ChatListFragment : Fragment() {
         chatUserViewModel.getChatUser().observe(requireActivity(), { users ->
             Log.d("userSize","user list size = ${users.size}")
             if (!users.isNullOrEmpty()) {
+                Log.d("userSize","user list size too = ${users.size}")
+
+
                 chat_user_recycler.adapter = ChatUserAdapter(users,requireActivity())
+                //mChatUserAdapter.addAllChatUser(users)
+
             } else {
                 Log.d("userSize","user list size => ${users.size}")
             }
@@ -171,11 +186,11 @@ class ChatListFragment : Fragment() {
         chatUserViewModel.updateChatUser2(message, userId)
     }
 
-    /*override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         mSocket?.let { socket ->
             socket.off("chat message", chatMessageListener)
         }
         mSocket?.disconnect()
-    }*/
+    }
 }

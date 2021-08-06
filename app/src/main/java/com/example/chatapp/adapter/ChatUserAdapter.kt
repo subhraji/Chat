@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.helper.inflate
 import com.example.chatapp.model.pojo.chat_user.ChatUser
@@ -20,7 +21,18 @@ class ChatUserAdapter(private val chatUserList: List<ChatUser>, private val cont
     override fun getItemCount(): Int {
         return chatUserList.size
     }
+    /*fun addChatUser(chatUser: ChatUser) {
+        chatUserList.filter {
+            chatUserList.remove(it.userId == chatUser.userId)
+        }
+        chatUserList.add(chatUser)
+        notifyItemInserted(chatUserList.size - 1)
+    }
 
+    fun addAllChatUser(chatUser: List<ChatUser>) {
+        chatUserList.addAll(0, chatUser)
+        notifyItemRangeInserted(0, chatUser.size)
+    }*/
     override fun onBindViewHolder(holder: ChatUserAdapter.ChatUserViewHolder, position: Int) {
 
         val users = chatUserList[position]
