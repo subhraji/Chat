@@ -62,8 +62,9 @@ class ChatFragment : Fragment() {
         arguments?.let {
             userId = it.getString(USER_ID).toString()
             friendsPhoneno = it.getString("phoneno").toString()
-
         }
+
+        Log.i("arguments","phone no => ${friendsPhoneno} user id => ${userId}")
     }
 
     override fun onCreateView(
@@ -147,7 +148,7 @@ class ChatFragment : Fragment() {
                                 message.sentOn
                             )
 
-                            if(chatUserSize == 0){
+                            if(chatUserSize == 1){
                                 updateChatUser(chatUser)
                             }else{
                                 saveChatUser(chatUser)
@@ -197,7 +198,7 @@ class ChatFragment : Fragment() {
             "",
             currentThreadTimeMillis
         )
-        if(chatUserSize != 0){
+        if(chatUserSize == 1){
             updateChatUser(chatUser)
         }else{
             saveChatUser(chatUser)
@@ -238,6 +239,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun saveMessage(message: Message) {
+        Log.i("saveMessage","reached here...")
         chat_recycler.scrollToPosition(mMessageAdapter.itemCount - 1)
         chatViewModel.saveMessage(message)
     }
@@ -255,6 +257,7 @@ class ChatFragment : Fragment() {
 
 
     private fun saveChatUser(chatUser: ChatUser) {
+        Log.i("saveChatUser","reached here...")
         chatUserViewModel.saveChatUser(chatUser)
     }
 
@@ -264,6 +267,7 @@ class ChatFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.i("socketOff","Done")
         mSocket?.let { socket ->
             socket.off("chat message", chatMessageListener)
         }
