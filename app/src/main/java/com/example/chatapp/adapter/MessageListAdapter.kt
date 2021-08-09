@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,9 +16,13 @@ import com.example.chatapp.R
 import com.example.chatapp.helper.gone
 import com.example.chatapp.helper.visible
 import com.example.chatapp.view.fragment.FriendsChatImagePreviewFragment
+import com.thekhaeng.pushdownanim.PushDownAnim
+import kotlinx.android.synthetic.main.item_chat_user.view.*
 import java.util.*
 
-class MessageListAdapter(private val messageList: MutableList<Message>, private val fragmentManager: FragmentManager):
+class MessageListAdapter(private val messageList: MutableList<Message>,
+                         private val fragmentManager: FragmentManager,
+                         private val chatDeleteClickListener: ChatDeleteClickListener):
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -61,10 +66,10 @@ class MessageListAdapter(private val messageList: MutableList<Message>, private 
 
         when (holder.itemViewType) {
             VIEW_TYPE_MESSAGE_SENT -> {
-                (holder as SentMessageHolder).bind(message, holder.itemView.context, fragmentManager)
+                (holder as SentMessageHolder).bind(message, holder.itemView.context, fragmentManager, holder, chatDeleteClickListener)
             }
             VIEW_TYPE_MESSAGE_RECEIVED -> {
-                (holder as ReceivedMessageHolder).bind(message, holder.itemView.context, fragmentManager)
+                (holder as ReceivedMessageHolder).bind(message, holder.itemView.context, fragmentManager, holder, chatDeleteClickListener)
             }
         }
     }
@@ -83,14 +88,41 @@ class MessageListAdapter(private val messageList: MutableList<Message>, private 
         notifyItemRangeInserted(0, messages.size)
     }
 
+
+    fun removeMessage(message: Message) {
+        messageList.remove(message)
+    }
+
     private class SentMessageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val messageText: TextView = itemView.findViewById(R.id.text_chat_message_me)
         val messageImg: ImageView = itemView.findViewById(R.id.chat_img_view_me)
         val timeText: TextView = itemView.findViewById(R.id.text_chat_timestamp_me)
         val dateText: TextView = itemView.findViewById(R.id.text_chat_date_me)
+        val deleteChatBtn: ImageView = itemView.findViewById(R.id.delete_chat_me_btn)
+        val chat_me_root_lay:LinearLayout = itemView.findViewById(R.id.chat_me_root_lay)
 
-        fun bind(message: Message, context: Context, fragmentManager: FragmentManager) {
+        fun bind(
+            message: Message,
+            context: Context,
+            fragmentManager: FragmentManager,
+            holder: RecyclerView.ViewHolder,
+            chatDeleteClickListener: ChatDeleteClickListener
+        ) {
+
+            deleteChatBtn.gone()
+
+            chat_me_root_lay.setOnLongClickListener {
+                deleteChatBtn.visible()
+                true
+            }
+
+            deleteChatBtn.tag = message
+            PushDownAnim.setPushDownAnimTo(deleteChatBtn).setOnClickListener {
+                chatDeleteClickListener.onDeleteClicked(it, holder.layoutPosition)
+                deleteChatBtn.gone()
+            }
+
             if(message.msg == ""){
                 messageText.gone()
             }else{
@@ -130,8 +162,28 @@ class MessageListAdapter(private val messageList: MutableList<Message>, private 
         val profileImage: ImageView = itemView.findViewById(R.id.image_gchat_profile_other)
         val messageImg: ImageView = itemView.findViewById(R.id.chat_img_view_other)
         val dateText: TextView = itemView.findViewById(R.id.text_chat_date_other)
+        val chatOtherRootLay: LinearLayout = itemView.findViewById(R.id.chat_other_root_lay)
+        val chatOtherDeleteBtn: ImageView = itemView.findViewById(R.id.delete_chat_other_btn)
 
-        fun bind(message: Message, context: Context, fragmentManager: FragmentManager) {
+
+        fun bind(message: Message, context: Context,
+                 fragmentManager: FragmentManager,
+                 holder: RecyclerView.ViewHolder,
+                 chatDeleteClickListener: ChatDeleteClickListener
+        ) {
+            chatOtherDeleteBtn.gone()
+
+            chatOtherRootLay.setOnLongClickListener {
+                chatOtherDeleteBtn.visible()
+                true
+            }
+
+            chatOtherDeleteBtn.tag = message
+            PushDownAnim.setPushDownAnimTo(chatOtherDeleteBtn).setOnClickListener {
+                chatDeleteClickListener.onDeleteClicked(it, holder.layoutPosition)
+                chatOtherDeleteBtn.gone()
+            }
+
             if (message.msg == "") {
                 messageText.gone()
             } else {
@@ -167,5 +219,10 @@ class MessageListAdapter(private val messageList: MutableList<Message>, private 
                 }
             }
         }
+    }
+
+
+    interface ChatDeleteClickListener {
+        fun onDeleteClicked(view: View, position: Int)
     }
 }

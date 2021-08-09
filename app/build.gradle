@@ -25,10 +25,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -118,4 +120,6 @@ dependencies {
     implementation "com.airbnb.android:lottie:3.4.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.10"
 
+    //Permissions
+    implementation 'com.karumi:dexter:6.0.0'
 }

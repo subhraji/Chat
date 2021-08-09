@@ -122,8 +122,18 @@ class ChatListFragment : Fragment(), ChatUserAdapter.ChatUserItemClickClickListe
 
                 if(message!=null){
 
+                    val messages = com.eduaid.child.models.pojo.friend_chat.Message(
+                        message.msgUuid,
+                        message.msg,
+                        "",
+                        com.example.chatapp.model.pojo.friend_chat.User(message.sentBy.id,message.sentBy.phoneno),
+                        message.sentOn,
+                    )
+                    messages.isSender = false
+                    messages.messageType = "text"
 
-                    saveMessage(message)
+
+                    saveMessage(messages)
 
                     /*chat user save*/
 

@@ -6,7 +6,8 @@
     android:gravity="end"
     android:orientation="vertical"
     android:layout_marginTop="16dp"
-    android:layout_marginEnd="8dp">
+    android:layout_marginEnd="8dp"
+    android:id="@+id/chat_me_root_lay">
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,42 +33,59 @@
         android:textColor="#C0C0C0"/>
 
     <LinearLayout
-        android:id="@+id/card_chat_message_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/item_chat_me_bg"
-        android:orientation="vertical"
-        android:padding="7dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_chat_date_me">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/chat_img_view_me"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            />
-
-        <TextView
-            android:id="@+id/text_chat_message_me"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/card_chat_message_me"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="260dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:text="This is a Message"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
+            android:background="@drawable/item_chat_me_bg"
+            android:orientation="vertical"
+            android:padding="7dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_chat_date_me">
 
-        <TextView
-            android:id="@+id/text_chat_timestamp_me"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/chat_img_view_me"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                />
+
+            <TextView
+                android:id="@+id/text_chat_message_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="260dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:text="This is a Message"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/text_chat_timestamp_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="10:00"
+                android:textColor="#C0C0C0"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/delete_chat_me_btn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:text="10:00"
-            android:textColor="#C0C0C0"
-            android:textSize="10sp" />
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_baseline_delete_24"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"/>
+
 
     </LinearLayout>
+
 
 
 
