@@ -5,12 +5,11 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.provider.MediaStore
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,23 +17,14 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
-import com.example.chatapp.adapter.ContactListAdapter
 import com.example.chatapp.adapter.MessageListAdapter
-import com.example.chatapp.adapter.TestMessageListAdapter
-import com.example.chatapp.helper.PaginationUtils
-import com.example.chatapp.helper.PagingListener
 import com.example.chatapp.helper.SocketHelper
 import com.example.chatapp.helper.hideSoftKeyboard
 import com.example.chatapp.model.network.APIConstants
 import com.example.chatapp.model.pojo.chat_user.ChatUser
-import com.example.chatapp.model.pojo.sync_contacts.User
 import com.example.chatapp.viewmodel.ChatUserViewModel
 import com.example.chatapp.viewmodel.FriendChatViewModel
 import com.github.nkzawa.emitter.Emitter
@@ -44,6 +34,7 @@ import com.google.gson.Gson
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_contacts_list.*
+import kotlinx.android.synthetic.main.fragment_friends_chat_image_preview.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,8 +44,10 @@ import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
+import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 private const val USER_ID = "userId"
 
@@ -398,6 +391,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
         mMessageAdapter.removeMessage(message)
 
         chatViewModel.getChatMessages(userId).observe(requireActivity(), { messages ->
+
             if (!messages.isNullOrEmpty()) {
                 val chatUser = ChatUser(
                     messages.last().sentBy.id,
@@ -421,20 +415,21 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
 
         if (resultCode == AppCompatActivity.RESULT_OK && requestCode == pickImage) {
 
-            try {
+        try {
                 imageUri = data?.data
+                showImageDialog(imageUri.toString())
 
-                val path = getRealPathFromUri(imageUri)
-                val imageFile = File(path!!)
-                showImageDialog(imageFile.absolutePath)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
         } else if (requestCode == TAKE_PICTURE && resultCode == AppCompatActivity.RESULT_OK) {
 
-            if (image != null) {
+            try {
+                imageUri = Uri.fromFile(File(image))
                 showImageDialog(image!!)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
         }

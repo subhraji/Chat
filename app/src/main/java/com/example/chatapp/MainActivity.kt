@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
             Context.MODE_PRIVATE)
         accessToken = sharedPreference.getString("accessToken","name").toString()
 
+        requestStoragePermission()
     }
 
     private fun requestStoragePermission() {

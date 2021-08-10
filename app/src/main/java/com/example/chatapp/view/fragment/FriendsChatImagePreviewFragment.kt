@@ -1,15 +1,21 @@
 package com.example.chatapp.view.fragment
 
 import android.app.Dialog
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.helper.gone
 import kotlinx.android.synthetic.main.fragment_friends_chat_image_preview.*
+import java.io.File
+
 
 class FriendsChatImagePreviewFragment() : DialogFragment() {
 
@@ -31,14 +37,23 @@ class FriendsChatImagePreviewFragment() : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.i("imagePath", imagePath.toString())
+
         if (imagePath != null){
-            //imagePath?.let { friends_chat_imageView.loadImg(it, requireContext()) }
+
+            val myUri = Uri.parse(imagePath)
+
+            friends_chat_imageView.setImageURI(myUri)
         }
 
         if (imagePath2 != null){
             friends_chat_img_controlLayout.gone()
             chat_img_top_layout.gone()
-            //imagePath2?.let { friends_chat_imageView.loadImg(it, requireContext()) }
+
+            Glide.with(requireActivity())
+                .load(File(imagePath2!!)) // Uri of the picture
+                .into(friends_chat_imageView)
+
         }
 
         back_btn.setOnClickListener {
