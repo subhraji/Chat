@@ -26,7 +26,7 @@ class TestMessageListAdapter(private val userList: List<Message>, private val co
 
         val messages = userList[position]
         holder.itemView.apply {
-            user_name_txt.text = messages.message
+            user_name_txt.text = messages.msg
         }
     }
 }

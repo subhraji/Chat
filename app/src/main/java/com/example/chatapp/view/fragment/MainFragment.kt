@@ -70,10 +70,6 @@ class MainFragment : Fragment() {
 
         }
 
-        contacts_img.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_contactsListFragment)
-        }
-
         super.onViewCreated(view, savedInstanceState)
     }
 

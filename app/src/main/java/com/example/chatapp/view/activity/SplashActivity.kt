@@ -15,6 +15,7 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         transparentStatusBar()
         setContentView(R.layout.activity_splash)
+
         Handler().postDelayed({
 
             val sharedPreference = getSharedPreferences("TOKEN_PREF",

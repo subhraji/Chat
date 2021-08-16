@@ -21,6 +21,12 @@ class ChatUserViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
+    fun deleteChatUser(chatUser: ChatUser){
+        CoroutineScope(Dispatchers.IO).launch {
+            db.chatUserDao.delete(chatUser)
+        }
+    }
+
     fun getChatUser() = liveData{
         emit(db.chatUserDao.getChatUser())
     }
@@ -37,6 +43,10 @@ class ChatUserViewModel(application: Application): AndroidViewModel(application)
         CoroutineScope(Dispatchers.IO).launch {
             db.chatUserDao.update(chatUser)
         }
+    }
+
+    suspend fun updateChatUser2(message: String, userId: String){
+        return db.chatUserDao.updateChatUser(message,userId)
     }
 
 }

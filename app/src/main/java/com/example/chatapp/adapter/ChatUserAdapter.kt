@@ -6,12 +6,17 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.helper.inflate
 import com.example.chatapp.model.pojo.chat_user.ChatUser
+import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.item_chat_user.view.*
 
-class ChatUserAdapter(private val chatUserList: List<ChatUser>, private val context: Context): RecyclerView.Adapter<ChatUserAdapter.ChatUserViewHolder>()   {
+class ChatUserAdapter(private val chatUserList: List<ChatUser>,
+                      private val context: Context,
+                      private val itemClickListener: ChatUserItemClickClickLister,
+                      ): RecyclerView.Adapter<ChatUserAdapter.ChatUserViewHolder>()   {
     inner class ChatUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatUserViewHolder {
@@ -28,11 +33,16 @@ class ChatUserAdapter(private val chatUserList: List<ChatUser>, private val cont
             chat_user_name_txt.text = users.userName
             chat_user_msg_txt.text = users.message
 
-            chatUserListItemRootLay.setOnClickListener {
-                val bundle = bundleOf("userId" to users.userId)
-                findNavController().navigate(R.id.action_mainFragment_to_chatFragment, bundle)
+            holder.itemView.chatUserListItemRootLay.tag = users
+            PushDownAnim.setPushDownAnimTo(holder.itemView.chatUserListItemRootLay).setOnClickListener {
+                itemClickListener.onItemClicked(it, holder.layoutPosition)
             }
+
         }
 
+    }
+
+    interface ChatUserItemClickClickLister {
+        fun onItemClicked(view: View, position: Int)
     }
 }

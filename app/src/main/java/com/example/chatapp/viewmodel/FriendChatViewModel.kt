@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.liveData
 import com.eduaid.child.models.db.room.chat.FriendChatDatabase
 import com.eduaid.child.models.pojo.friend_chat.Message
+import com.example.chatapp.model.pojo.chat_user.ChatUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,5 +25,23 @@ class FriendChatViewModel(application: Application): AndroidViewModel(applicatio
 
     suspend fun getMessageCount(friendId: String): Int {
         return db.friendChatDao.getChatMessageCount(friendId)
+    }
+
+    fun deleteChat(message: Message){
+        CoroutineScope(Dispatchers.IO).launch {
+            db.friendChatDao.delete(message)
+        }
+    }
+
+    fun updateIsSent(isSent: Boolean, msgUuid: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            db.friendChatDao.updateIsSentStatus(isSent, msgUuid)
+        }
+    }
+
+    fun updateMessage(message: Message){
+        CoroutineScope(Dispatchers.IO).launch {
+            db.friendChatDao.update(message)
+        }
     }
 }

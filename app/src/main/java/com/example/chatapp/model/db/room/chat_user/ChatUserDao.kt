@@ -16,4 +16,7 @@ interface ChatUserDao: BaseDao<ChatUser> {
 
     @Query("Select count(*) from chatuser where userId=:userId")
     suspend fun isChatUserAvailable(userId: String): Int
+
+    @Query("Update chatuser set message=:message where userId =:userId")
+    suspend fun updateChatUser(message: String, userId: String)
 }
