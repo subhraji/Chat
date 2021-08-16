@@ -236,6 +236,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
         )
         message.isSender = true
         message.messageType = "text"
+        message.isSent = true
 
         mMessageAdapter.addMessage(message)
         saveMessage(message)

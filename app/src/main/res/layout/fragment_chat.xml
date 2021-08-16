@@ -16,7 +16,7 @@
         android:layout_marginEnd="11dp"
         android:layout_marginBottom="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_chat_me"/>
+        tools:listitem="@layout/item_chat_me" />
 
     <LinearLayout
         android:id="@+id/controlLayout"

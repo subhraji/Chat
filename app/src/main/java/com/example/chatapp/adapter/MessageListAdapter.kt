@@ -149,8 +149,14 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
 
             val date = Date(message.sentOn)
             // Format the stored timestamp into a readable String using method.
-            timeText.text = "20"
-            dateText.text = "20"
+
+                if (message.hasRead){
+                    timeText.text = "seen"
+                }else if(message.isSent){
+                    timeText.text = "sent"
+                }else{
+                    timeText.text = "20"
+                }
         }
         }
     }
