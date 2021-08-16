@@ -13,6 +13,9 @@ interface FriendChatDao: BaseDao<Message> {
     @Query("Update message set isSent=:isSent where msgUuid =:msgUuid")
     suspend fun updateIsSentStatus(isSent: Boolean, msgUuid: String)
 
+    @Query("Update message set isSeen=:isSeen where msgUuid =:msgUuid")
+    suspend fun updateIsSeenStatus(isSeen: Boolean, msgUuid: String)
+
     /*@Query("Select * from message where isSent=:isSent")
     suspend fun getUnsentMessages(isSent:Boolean): List<Message>*/
 

@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
+import com.example.chatapp.adapter.ContactListAdapter
 import com.example.chatapp.adapter.MessageListAdapter
 import com.example.chatapp.helper.SocketHelper
 import com.example.chatapp.helper.hideSoftKeyboard
@@ -159,7 +160,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
                     )
                     messages.isSender = false
                     messages.messageType = "text"
-                    message.isSent = true
 
                     saveMessage(messages)
                     sendAckMessage(message.msgUuid, userId, true)
@@ -198,17 +198,29 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
 
 
     private val ackStatusListener = Emitter.Listener {
-        Log.i("checkList","reached here too")
+
 
         requireActivity().runOnUiThread {
+            Log.i("checkList","reached here too")
             val data = it[0] as JSONObject
             try {
                 val status = data.getInt("status")
                 val msgUuid = data.getString("msgUuid")
                 Log.i("msgAckstatus", "status => ${data}")
-                if (status == 0) {
+
+                if(status == 2){
+
+                    chatViewModel.updateIsSeen(true, msgUuid)
+                    mMessageAdapter.updateSeen(msgUuid)
+
+                }else if (status == 0) {
+
                     chatViewModel.updateIsSent(true, msgUuid)
+                    mMessageAdapter.updateSent(msgUuid)
+
                 }
+
+
             } catch (e: JSONException) {
                 Log.d("ACK","ACK ---> $data")
                 e.printStackTrace()
@@ -359,7 +371,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
         builder.show()
     }
 
-
     private fun dispatchCameraIntent() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(requireActivity().packageManager) != null) {
@@ -441,7 +452,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
         })
 
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

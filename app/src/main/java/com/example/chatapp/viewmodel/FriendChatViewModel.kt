@@ -39,6 +39,12 @@ class FriendChatViewModel(application: Application): AndroidViewModel(applicatio
         }
     }
 
+    fun updateIsSeen(isSeen: Boolean, msgUuid: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            db.friendChatDao.updateIsSeenStatus(isSeen, msgUuid)
+        }
+    }
+
     fun updateMessage(message: Message){
         CoroutineScope(Dispatchers.IO).launch {
             db.friendChatDao.update(message)
