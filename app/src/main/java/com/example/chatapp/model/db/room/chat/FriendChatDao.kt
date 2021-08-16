@@ -10,8 +10,8 @@ interface FriendChatDao: BaseDao<Message> {
     @Query("Select * from message where friend_id = :friendId order by sentOn")
     suspend fun getChatMessages(friendId: String): List<Message>
 
-    /*@Query("Update message set isSent=:isSent where msgUuid =:msgUuid")
-    suspend fun updateIsSentStatus(isSent: Boolean, msgUuid: String)*/
+    @Query("Update message set isSent=:isSent where msgUuid =:msgUuid")
+    suspend fun updateIsSentStatus(isSent: Boolean, msgUuid: String)
 
     /*@Query("Select * from message where isSent=:isSent")
     suspend fun getUnsentMessages(isSent:Boolean): List<Message>*/

@@ -32,4 +32,16 @@ class FriendChatViewModel(application: Application): AndroidViewModel(applicatio
             db.friendChatDao.delete(message)
         }
     }
+
+    fun updateIsSent(isSent: Boolean, msgUuid: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            db.friendChatDao.updateIsSentStatus(isSent, msgUuid)
+        }
+    }
+
+    fun updateMessage(message: Message){
+        CoroutineScope(Dispatchers.IO).launch {
+            db.friendChatDao.update(message)
+        }
+    }
 }

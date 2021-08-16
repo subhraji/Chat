@@ -129,6 +129,8 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
         //listeners
         mSocket?.let { socket ->
             socket.on("chat message", chatMessageListener)
+            socket.on("ackStatus", ackStatusListener)
+
         }
 
         mSocket?.connect()
@@ -138,10 +140,10 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
 
     private val chatMessageListener = Emitter.Listener {
         requireActivity().runOnUiThread {
+            Log.i("checkList","reached here")
+
             val data = it[0] as JSONObject
             try {
-                Log.d("data", "data => $data")
-                //val isPending = data.getBoolean("isPending")
                 val messageData = data.getJSONObject("data")
                 val message = Gson().fromJson(messageData.toString(), Message::class.java)
                 if (message.sentBy.id == userId) {
@@ -157,9 +159,10 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
                     )
                     messages.isSender = false
                     messages.messageType = "text"
-
+                    message.isSent = true
 
                     saveMessage(messages)
+                    sendAckMessage(message.msgUuid, userId, true)
 
                     /*chat user save*/
                     CoroutineScope(Dispatchers.IO).launch {
@@ -188,6 +191,26 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
                 }
             } catch (e: JSONException) {
                 Log.d("Socket_connected","exception -> ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
+
+
+    private val ackStatusListener = Emitter.Listener {
+        Log.i("checkList","reached here too")
+
+        requireActivity().runOnUiThread {
+            val data = it[0] as JSONObject
+            try {
+                val status = data.getInt("status")
+                val msgUuid = data.getString("msgUuid")
+                Log.i("msgAckstatus", "status => ${data}")
+                if (status == 0) {
+                    chatViewModel.updateIsSent(true, msgUuid)
+                }
+            } catch (e: JSONException) {
+                Log.d("ACK","ACK ---> $data")
                 e.printStackTrace()
             }
         }
@@ -265,6 +288,14 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
         })
     }
 
+    private fun sendAckMessage(msgUuid: String, senderId: String, hasRead: Boolean) {
+        val ackObj = JSONObject()
+        ackObj.put("msgUuid", msgUuid)
+        ackObj.put("senderId", senderId)
+        ackObj.put("hasRead", hasRead)
+        mSocket?.emit("message ack", ackObj.toString())
+    }
+
     private fun saveMessage(message: Message) {
         Log.i("saveMessage","reached here...")
         chat_recycler.scrollToPosition(mMessageAdapter.itemCount - 1)
@@ -275,7 +306,19 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
         chatViewModel.getChatMessages(userId).observe(requireActivity(), { messages ->
             Log.d("msgSize","msg list size = ${messages.size}")
             if (!messages.isNullOrEmpty()) {
+
+                messages.forEach { message ->
+                    if (!message.hasRead) {
+                        message.hasRead = true
+                        sendAckMessage(message.msgUuid, userId!!, true)
+                        //update hasRead in db
+                        chatViewModel.updateMessage(message)
+                    }
+                }
+
                 mMessageAdapter.addAllMessages(messages)
+
+
             } else {
                 Log.d("msgSize","msg list size => ${messages.size}")
             }
@@ -291,16 +334,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
     private fun updateChatUser(chatUser: ChatUser) {
         chatUserViewModel.updateChatUser(chatUser)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("socketOff","Done")
-        mSocket?.let { socket ->
-            socket.off("chat message", chatMessageListener)
-        }
-        mSocket?.disconnect()
-    }
-
 
     private fun selectImage() {
         val options =
@@ -433,5 +466,15 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
             }
 
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("socketOff","Done")
+        mSocket?.let { socket ->
+            socket.off("chat message", chatMessageListener)
+            socket.off("ackStatus", ackStatusListener)
+        }
+        mSocket?.disconnect()
     }
 }
