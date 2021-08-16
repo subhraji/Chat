@@ -31,6 +31,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
         private const val VIEW_TYPE_MESSAGE_RECEIVED = 2
     }
 
+
     override fun getItemViewType(position: Int): Int {
         val message = messageList[position]
         return if (message.isSender) {
@@ -88,9 +89,18 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
         notifyItemRangeInserted(0, messages.size)
     }
 
-
     fun removeMessage(message: Message) {
         messageList.remove(message)
+    }
+
+    fun updateSent(msgUuid:String){
+        messageList?.find { it.msgUuid == msgUuid }?.isSent = true
+        notifyDataSetChanged()
+    }
+
+    fun updateSeen(msgUuid:String){
+        messageList?.find { it.msgUuid == msgUuid }?.isSeen = true
+        notifyDataSetChanged()
     }
 
     private class SentMessageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -149,15 +159,14 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
 
             val date = Date(message.sentOn)
             // Format the stored timestamp into a readable String using method.
-
-                if (message.hasRead){
+                if(message.isSeen == true){
                     timeText.text = "seen"
-                }else if(message.isSent){
+                }else if(message.isSent == true){
                     timeText.text = "sent"
                 }else{
                     timeText.text = "20"
                 }
-        }
+            }
         }
     }
 
@@ -232,4 +241,5 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
     interface ChatDeleteClickListener {
         fun onDeleteClicked(view: View, position: Int)
     }
+
 }

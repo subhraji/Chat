@@ -25,4 +25,5 @@ data class Message(
         var messageType: String? = null
         var hasRead = false
         var isSent = false
+        var isSeen = false
 }
