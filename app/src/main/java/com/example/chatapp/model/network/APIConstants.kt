@@ -1,7 +1,7 @@
 package com.example.chatapp.model.network
 
 object APIConstants {
-    var BASE_URL = "https://6875a044fbad.ngrok.io"
-    const val QUIZ_NODE_URL = "https://6875a044fbad.ngrok.io"
+    var BASE_URL = "https://06e8df8811c1.ngrok.io"
+    const val QUIZ_NODE_URL = "https://06e8df8811c1.ngrok.io"
 
 }
