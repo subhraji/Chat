@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -22,12 +23,15 @@ import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.adapter.ContactListAdapter
 import com.example.chatapp.adapter.MessageListAdapter
-import com.example.chatapp.helper.SocketHelper
-import com.example.chatapp.helper.hideSoftKeyboard
+import com.example.chatapp.helper.*
 import com.example.chatapp.model.network.APIConstants
 import com.example.chatapp.model.pojo.chat_user.ChatUser
+import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
+import com.example.chatapp.model.pojo.friend_chat.User
+import com.example.chatapp.model.repo.Outcome
 import com.example.chatapp.viewmodel.ChatUserViewModel
 import com.example.chatapp.viewmodel.FriendChatViewModel
+import com.example.chatapp.viewmodel.UploadChatImageViewModel
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Ack
 import com.github.nkzawa.socketio.client.Socket
@@ -40,6 +44,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
 import org.json.JSONException
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -52,13 +57,15 @@ import java.util.*
 
 private const val USER_ID = "userId"
 
-class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
+class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, UploadImageListener {
     private var mSocket: Socket? = null
     lateinit var accessToken: String
     lateinit var userId: String
     lateinit var friendsPhoneno: String
     private val chatViewModel: FriendChatViewModel by viewModel()
     private val chatUserViewModel: ChatUserViewModel by viewModel()
+    private val uploadChatImageViewModel: UploadChatImageViewModel by viewModel()
+
     private lateinit var mMessageAdapter: MessageListAdapter
     private var size = 0
     private var chatUserSize = 0
@@ -424,7 +431,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
     private fun showImageDialog(absolutePath: String) {
         val bundle = Bundle()
         bundle.putString("path", absolutePath)
-        val dialogFragment = FriendsChatImagePreviewFragment()
+        val dialogFragment = FriendsChatImagePreviewFragment(this)
         dialogFragment.arguments = bundle
         dialogFragment.show(requireActivity().supportFragmentManager, "signature")
     }
@@ -452,6 +459,52 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener {
         })
 
     }
+
+    private fun getUniqueUuid(): String {
+        return userId!! + System.currentTimeMillis().toString()
+    }
+
+    private fun uploadFile(
+        receiver_id: String,
+        messageType: String,
+        imagePart: MultipartBody.Part,
+        captionMessage: String = ""
+    ) {
+        val loader = requireActivity().loadingDialog()
+        loader.show()
+        uploadChatImageViewModel.uploadImage(receiver_id,messageType,imagePart,accessToken).observe(viewLifecycleOwner,{ outcome->
+            loader.dismiss()
+            when(outcome){
+                is Outcome.Success ->{
+                    if(outcome.data.status =="success"){
+                        Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
+
+                    }else{
+                        Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                is Outcome.Failure<*> -> {
+                    Toast.makeText(activity,outcome.e.message, Toast.LENGTH_SHORT).show()
+
+                    outcome.e.printStackTrace()
+                    Log.i("status",outcome.e.cause.toString())
+                }
+            }
+        })
+    }
+
+
+    override fun uploadImage(path: String, message: String) {
+        try {
+            val imagePart = requireActivity().createMultiPart("file", path)
+            val messageType = "image"
+            uploadFile(userId, messageType, imagePart, message)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

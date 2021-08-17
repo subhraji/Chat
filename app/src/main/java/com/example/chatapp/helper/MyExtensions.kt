@@ -16,7 +16,15 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.example.chatapp.R
+import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.loadingdialog.view.*
+import kotlinx.coroutines.Dispatchers
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import java.net.URL
 import java.util.*
 
@@ -109,4 +117,18 @@ fun Activity.loadingDialog(cancelable: Boolean = false, lottieFile: Int? = null)
         alertLayout.loadingAnimation.setAnimation(lottieFile)
     }
     return loading
+}
+
+fun String.toMultipartFormString(): RequestBody {
+    return this.toRequestBody(MultipartBody.FORM)
+}
+
+fun Context.createMultiPart(keyName: String, photoPath: String): MultipartBody.Part {
+    val file = File(photoPath)
+    //val compressedImageFile = Compressor.compress(this,file)
+    val requestFile = file.asRequestBody("image/jpg".toMediaTypeOrNull())
+
+    // MultipartBody.Part is used to send also the actual file name
+    return MultipartBody.Part.createFormData(keyName, file.name, requestFile)
+
 }

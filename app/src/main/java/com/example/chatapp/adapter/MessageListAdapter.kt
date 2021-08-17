@@ -148,7 +148,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                         if(message.messageType == "image") {
                             val bundle = Bundle()
                             bundle.putString("image", message.image)
-                            val dialogFragment = FriendsChatImagePreviewFragment()
+                            val dialogFragment = FriendsChatImagePreviewFragment(null)
                             dialogFragment.arguments = bundle
                             dialogFragment.show(fragmentManager, "signature")
                         }
@@ -225,7 +225,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                         if (message.messageType == "image") {
                             val bundle = Bundle()
                             bundle.putString("image", message.image)
-                            val dialogFragment = FriendsChatImagePreviewFragment()
+                            val dialogFragment = FriendsChatImagePreviewFragment(null)
                             dialogFragment.arguments = bundle
                             dialogFragment.show(fragmentManager, "signature")
                         }
