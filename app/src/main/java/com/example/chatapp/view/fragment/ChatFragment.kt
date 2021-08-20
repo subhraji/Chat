@@ -578,7 +578,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         } else if (requestCode == TAKE_PICTURE && resultCode == AppCompatActivity.RESULT_OK) {
 
             try {
-                //imageUri = Uri.fromFile(File(image))
 
                 showImageDialog(image.toString())
 

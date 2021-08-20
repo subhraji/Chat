@@ -25,7 +25,6 @@ class FriendsChatImagePreviewFragment(uploadImageListener: UploadImageListener?)
     private val uploadListener = uploadImageListener
     private var imagePath: String? = null
     private var imagePath2: String? = null
-    lateinit var imagePathUri: Uri
 
 
     override fun onCreateView(
@@ -45,12 +44,10 @@ class FriendsChatImagePreviewFragment(uploadImageListener: UploadImageListener?)
 
         if (imagePath != null){
 
-            imagePathUri = Uri.parse(imagePath)
 
             imagePath?.let { friends_chat_imageView.loadImg(it, requireContext()) }
 
-            Log.i("imagePath", imagePath.toString())
-            Log.i("imagePath","uri format => "+imagePathUri)
+                Log.i("imagePath", imagePath.toString())
         }
 
         if (imagePath2 != null){
