@@ -2,7 +2,6 @@ package com.example.chatapp.view.fragment
 
 import android.app.Dialog
 import android.database.Cursor
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,9 +15,9 @@ import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.helper.UploadImageListener
 import com.example.chatapp.helper.gone
+import com.example.chatapp.helper.loadImg
 import kotlinx.android.synthetic.main.fragment_friends_chat_image_preview.*
 import java.io.File
-import java.net.URI
 
 
 class FriendsChatImagePreviewFragment(uploadImageListener: UploadImageListener?) : DialogFragment() {
@@ -26,7 +25,6 @@ class FriendsChatImagePreviewFragment(uploadImageListener: UploadImageListener?)
     private val uploadListener = uploadImageListener
     private var imagePath: String? = null
     private var imagePath2: String? = null
-    lateinit var sendImagePathVar: String
     lateinit var imagePathUri: Uri
 
 
@@ -44,18 +42,15 @@ class FriendsChatImagePreviewFragment(uploadImageListener: UploadImageListener?)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.i("imagePath", imagePath.toString())
 
         if (imagePath != null){
 
             imagePathUri = Uri.parse(imagePath)
-            friends_chat_imageView.setImageURI(imagePathUri)
 
+            imagePath?.let { friends_chat_imageView.loadImg(it, requireContext()) }
 
-            val path = getRealPathFromUri(imagePathUri)
-            sendImagePathVar = File(path).toString()
-
-            Log.i("filePath", sendImagePathVar)
+            Log.i("imagePath", imagePath.toString())
+            Log.i("imagePath","uri format => "+imagePathUri)
         }
 
         if (imagePath2 != null){
@@ -73,27 +68,14 @@ class FriendsChatImagePreviewFragment(uploadImageListener: UploadImageListener?)
         }
 
         friends_chat_caption_img_btnSend.setOnClickListener {
+
             val caption = friends_chat_img_caption.text.toString().trim()
-            sendImagePathVar?.let { path ->
+
+            imagePath?.let { path ->
                 uploadListener?.uploadImage(path, caption)
             }
-            dismiss()
-        }
-    }
 
-    fun getRealPathFromUri(contentUri: Uri?): String? {
-        var cursor: Cursor? = null
-        return try {
-            val proj = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = requireContext().contentResolver.query(contentUri!!, proj, null, null, null)
-            assert(cursor != null)
-            val columnIndex: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            cursor.moveToFirst()
-            cursor.getString(columnIndex)
-        } finally {
-            if (cursor != null) {
-                cursor.close()
-            }
+            dismiss()
         }
     }
 

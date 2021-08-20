@@ -7,7 +7,7 @@ data class UploadImageReq (
     @SerializedName("receiver_id")
     val receiver_id: String,
     @SerializedName("message_type")
-    val message_type: String,
-    @SerializedName("image")
-    val image: MultipartBody.Part?,
+    val message_type: String
+    /*@SerializedName("image")
+    val image: MultipartBody.Part?,*/
 )

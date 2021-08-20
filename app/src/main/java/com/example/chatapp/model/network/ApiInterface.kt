@@ -26,16 +26,10 @@ interface ApiInterface {
     suspend fun syncContacts(@Body body: SyncContactsReq?,
                              @Header("Authorization") token: String): SyncContactsResponse?
 
-    /*@Multipart
+    @Multipart
     @POST("/api/upload-media")
-    fun uploadChatImage(
-        @Header("Authorization") token: String,
-        @Part("receiver_id") receiver_id: RequestBody,
-        @Part("message_type") message_type: RequestBody,
-        @Part image: MultipartBody.Part?
-    ): Single<UploadImageResponse>*/
-
-    @POST("/api/upload-media")
-    suspend fun uploadChatImage(@Body body: UploadImageReq?,
+    suspend fun uploadChatImage(@Part("receiver_id") receiver_id: RequestBody,
+                                @Part("message_type") message_type: RequestBody,
+                                @Part image: MultipartBody.Part?,
                                 @Header("Authorization") token: String): UploadImageResponse?
 }

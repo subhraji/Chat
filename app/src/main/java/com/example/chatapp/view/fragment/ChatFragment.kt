@@ -37,6 +37,7 @@ import com.github.nkzawa.socketio.client.Ack
 import com.github.nkzawa.socketio.client.Socket
 import com.google.gson.Gson
 import com.thekhaeng.pushdownanim.PushDownAnim
+import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_contacts_list.*
 import kotlinx.android.synthetic.main.fragment_friends_chat_image_preview.*
@@ -44,7 +45,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONException
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -127,7 +130,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             }
         }
 
-
     }
 
     private fun initSocket() {
@@ -156,12 +158,15 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                 val message = Gson().fromJson(messageData.toString(), Message::class.java)
                 if (message.sentBy.id == userId) {
 
+                    Log.i("msgType","messageType = ${message.messageType}")
+
+
                     mMessageAdapter.addMessage(message)
 
                     val messages = com.eduaid.child.models.pojo.friend_chat.Message(
                         message.msgUuid,
                         message.msg,
-                        "",
+                        message.image,
                         com.example.chatapp.model.pojo.friend_chat.User(message.sentBy.id,message.sentBy.phoneno),
                         message.sentOn,
                     )
@@ -472,12 +477,50 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
     ) {
         val loader = requireActivity().loadingDialog()
         loader.show()
-        uploadChatImageViewModel.uploadImage(receiver_id,messageType,imagePart,accessToken).observe(viewLifecycleOwner,{ outcome->
+        uploadChatImageViewModel.uploadImage(receiver_id,"image",imagePart,accessToken).observe(viewLifecycleOwner,{ outcome->
             loader.dismiss()
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){
                         Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
+
+                        val msgUuid = getUniqueUuid()
+                        val currentThreadTimeMillis = System.currentTimeMillis()
+                        val message = Message(
+                            msgUuid,
+                            captionMessage,
+                            "https://images.unsplash.com/photo-1498579687545-d5a4fffb0a9e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+                            User(userId, friendsPhoneno),
+                            currentThreadTimeMillis
+                        )
+                        message.isSender = true
+                        message.messageType = "image"
+
+                        mMessageAdapter.addMessage(message)
+                        saveMessage(message)
+
+                        /*chat user save*/
+                        val chatUser = ChatUser(
+                            userId,
+                            friendsPhoneno,
+                            captionMessage,
+                            "",
+                            currentThreadTimeMillis
+                        )
+                        if(chatUserSize == 1){
+                            updateChatUser(chatUser)
+                        }else{
+                            saveChatUser(chatUser)
+                        }
+
+                        Log.d("emitting send message","emitting send message")
+                        emitMessage(
+                            msgUuid,
+                            captionMessage,
+                            currentThreadTimeMillis,
+                            "",
+                            userId
+                        )
 
                     }else{
                         Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
@@ -486,6 +529,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
 
                 is Outcome.Failure<*> -> {
                     Toast.makeText(activity,outcome.e.message, Toast.LENGTH_SHORT).show()
+                    Log.i("statusMsg",outcome.e.message.toString())
 
                     outcome.e.printStackTrace()
                     Log.i("status",outcome.e.cause.toString())
@@ -497,9 +541,19 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
 
     override fun uploadImage(path: String, message: String) {
         try {
-            val imagePart = requireActivity().createMultiPart("file", path)
-            val messageType = "image"
-            uploadFile(userId, messageType, imagePart, message)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                withContext(Dispatchers.Main) {
+
+
+                    val imagePart = requireActivity().createMultiPart("image", path)
+                    val messageType = "image"
+                    Log.i("imagePart: " ,imagePart.toString())
+
+                    uploadFile(userId, messageType, imagePart, message)
+                }
+            }
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -513,7 +567,9 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
 
         try {
                 imageUri = data?.data
-                showImageDialog(imageUri.toString())
+                val path = getRealPathFromUri(imageUri)
+                val imageFile = File(path!!)
+                showImageDialog(imageFile.absolutePath)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -522,8 +578,10 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         } else if (requestCode == TAKE_PICTURE && resultCode == AppCompatActivity.RESULT_OK) {
 
             try {
-                imageUri = Uri.fromFile(File(image))
-                showImageDialog(image!!)
+                //imageUri = Uri.fromFile(File(image))
+
+                showImageDialog(image.toString())
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }

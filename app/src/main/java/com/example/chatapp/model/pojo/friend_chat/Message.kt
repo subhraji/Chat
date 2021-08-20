@@ -22,7 +22,7 @@ data class Message(
 
 ){
         var isSender = false
-        var messageType: String? = null
+        var messageType = "text"
         var hasRead = false
         var isSent = false
         var isSeen = false

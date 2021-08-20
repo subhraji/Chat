@@ -30,8 +30,15 @@ class ChatImageUploadRepositoryImpl(context: Context) : ChatImageUploadRepositor
     ): Outcome<UploadImageResponse> {
         val apiResponse = MutableLiveData<Outcome<UploadImageResponse>>()
         try {
-            val response = apiService.uploadChatImage(UploadImageReq(receiver_id,messageType,image),token)
+            val response = apiService.uploadChatImage(
+                receiver_id.toMultipartFormString(),
+                messageType.toMultipartFormString(),
+                image,
+                token,
+                )
+
             apiResponse.value = Outcome.success(response!!)
+
         } catch (e: Throwable) {
             apiResponse.value = Outcome.failure(e)
         }

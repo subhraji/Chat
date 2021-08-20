@@ -8,17 +8,20 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.example.chatapp.R
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.loadingdialog.view.*
 import kotlinx.coroutines.Dispatchers
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -125,10 +128,20 @@ fun String.toMultipartFormString(): RequestBody {
 
 fun Context.createMultiPart(keyName: String, photoPath: String): MultipartBody.Part {
     val file = File(photoPath)
-    //val compressedImageFile = Compressor.compress(this,file)
-    val requestFile = file.asRequestBody("image/jpg".toMediaTypeOrNull())
+    //Log.i("xxx ",file.toString())
 
+    //val compressedImageFile = Compressor.compress(this,file)
+    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+    Log.i("xxx ",requestFile.toString())
     // MultipartBody.Part is used to send also the actual file name
     return MultipartBody.Part.createFormData(keyName, file.name, requestFile)
 
+}
+
+
+fun ImageView.loadImg(path: Any, context: Context, placeholder: Drawable? = null) {
+    Glide.with(context)
+        .load(path)
+        .placeholder(placeholder)
+        .into(this)
 }

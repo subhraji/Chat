@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.helper.gone
@@ -144,6 +145,8 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                 if (message.messageType == "image") {
                     messageImg.visible()
                     //messageImg.loadUrl(message.image, context)
+                    Glide.with(context).load(message.image).into(messageImg);
+
                     messageImg.setOnClickListener {
                         if(message.messageType == "image") {
                             val bundle = Bundle()
@@ -186,7 +189,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                  holder: RecyclerView.ViewHolder,
                  chatDeleteClickListener: ChatDeleteClickListener
         ) {
-            messageImg.gone()
+            //messageImg.gone()
             chatOtherDeleteBtn.gone()
 
             chatOtherRootLay.setOnLongClickListener {
@@ -221,6 +224,8 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                 if (message.messageType == "image") {
                     messageImg.visible()
                     //messageImg.loadUrl(message.image, context)
+                    Glide.with(context).load(message.image).into(messageImg);
+
                     messageImg.setOnClickListener {
                         if (message.messageType == "image") {
                             val bundle = Bundle()
