@@ -1,14 +1,17 @@
 package com.example.chatapp.model.network
 
+import com.example.chatapp.model.pojo.friend_chat.UploadImageReq
+import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
 import com.example.chatapp.model.pojo.req_otp.ReqOtpParam
 import com.example.chatapp.model.pojo.req_otp.RequestOtp
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsResponse
 import com.example.chatapp.model.pojo.verify_otp.VerifyOtpReq
 import com.example.chatapp.model.pojo.verify_otp.VerifyOtpResponse
-import retrofit2.http.Body
-import retrofit2.http.Header
-import retrofit2.http.POST
+import io.reactivex.Single
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.*
 
 
 interface ApiInterface {
@@ -20,5 +23,13 @@ interface ApiInterface {
     suspend fun verifyOtp(@Body body: VerifyOtpReq?): VerifyOtpResponse?
 
     @POST("/api/sync-contacts")
-    suspend fun syncContacts(@Body body: SyncContactsReq?, @Header("Authorization") token: String): SyncContactsResponse?
+    suspend fun syncContacts(@Body body: SyncContactsReq?,
+                             @Header("Authorization") token: String): SyncContactsResponse?
+
+    @Multipart
+    @POST("/api/upload-media")
+    suspend fun uploadChatImage(@Part("receiver_id") receiver_id: RequestBody,
+                                @Part("message_type") message_type: RequestBody,
+                                @Part image: MultipartBody.Part?,
+                                @Header("Authorization") token: String): UploadImageResponse?
 }
