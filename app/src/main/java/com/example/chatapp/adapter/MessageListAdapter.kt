@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -108,7 +109,8 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
 
         val messageText: TextView = itemView.findViewById(R.id.text_chat_message_me)
         val messageImg: ImageView = itemView.findViewById(R.id.chat_img_view_me)
-        val timeText: TextView = itemView.findViewById(R.id.text_chat_timestamp_me)
+        //val timeText: TextView = itemView.findViewById(R.id.text_chat_timestamp_me)
+        val sentMark: ImageView = itemView.findViewById(R.id.sent_mark_img)
         val dateText: TextView = itemView.findViewById(R.id.text_chat_date_me)
         val deleteChatBtn: ImageView = itemView.findViewById(R.id.delete_chat_me_btn)
         val chat_me_root_lay:LinearLayout = itemView.findViewById(R.id.chat_me_root_lay)
@@ -163,11 +165,11 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
             val date = Date(message.sentOn)
             // Format the stored timestamp into a readable String using method.
                 if(message.isSeen == true){
-                    timeText.text = "seen"
+                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN);
                 }else if(message.isSent == true){
-                    timeText.text = "sent"
+                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN);
                 }else{
-                    timeText.text = "20"
+                    sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_done_24))
                 }
             }
         }

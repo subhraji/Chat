@@ -8,4 +8,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="purple_700">#0081F6</color>
     <color name="chatOtherColor">#AFAFB3</color>
+
+    <color name="sentMarkSentClr">#AFAFB3</color>
+    <color name="sentMarkSeenClr">#FFEB3B</color>
+
 </resources>

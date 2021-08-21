@@ -63,14 +63,13 @@
                 android:textColor="#ffffff"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/text_chat_timestamp_me"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/sent_mark_img"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_gravity="end"
-                android:text="10:00"
-                android:textColor="#C0C0C0"
-                android:textSize="10sp" />
+                android:src="@drawable/done_all_grey"
+                />
 
         </LinearLayout>
 
