@@ -62,13 +62,25 @@
             app:layout_constraintStart_toEndOf="@+id/image_gchat_profile_other"
             app:layout_constraintTop_toBottomOf="@+id/text_gchat_user_other"
             android:background="@drawable/item_chat_other_bg"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="7dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:id="@+id/chat_img_view_other"
-                android:layout_marginTop="8dp" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ProgressBar
+                    android:id="@+id/image_progress_other"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="visible"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/white"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/chat_img_view_other"/>
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/text_gchat_message_other"
@@ -88,10 +100,7 @@
                 android:layout_height="wrap_content"
                 android:text="8:00"
                 android:textColor="@color/white"
-                android:textSize="10sp"
-                android:layout_marginStart="7dp"
-                android:layout_marginEnd="7dp"
-                android:layout_marginBottom="7dp"/>
+                android:textSize="10sp"/>
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

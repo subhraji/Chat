@@ -1,6 +1,7 @@
 package com.example.chatapp.adapter
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,11 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.helper.getTimeOnly
@@ -22,6 +27,7 @@ import com.example.chatapp.view.fragment.FriendsChatImagePreviewFragment
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.item_chat_user.view.*
 import java.util.*
+import javax.sql.DataSource
 
 class MessageListAdapter(private val messageList: MutableList<Message>,
                          private val fragmentManager: FragmentManager,
@@ -115,6 +121,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
         val dateText: TextView = itemView.findViewById(R.id.text_chat_date_me)
         val deleteChatBtn: ImageView = itemView.findViewById(R.id.delete_chat_me_btn)
         val chat_me_root_lay:LinearLayout = itemView.findViewById(R.id.chat_me_root_lay)
+        val image_progress_me:ProgressBar = itemView.findViewById(R.id.image_progress_me)
 
         fun bind(
             message: Message,
@@ -147,8 +154,33 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
             if (message.image != null) {
                 if (message.messageType == "image") {
                     messageImg.visible()
-                    //messageImg.loadUrl(message.image, context)
-                    Glide.with(context).load(message.image).into(messageImg);
+                    image_progress_me.visible()
+                    Glide.with(context)
+                        .load(message.image)
+                        .centerCrop()
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                image_progress_me.gone()
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                dataSource: com.bumptech.glide.load.DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                image_progress_me.gone()
+                                return false
+                            }
+                        })
+                        .into(messageImg)
 
                     messageImg.setOnClickListener {
                         if(message.messageType == "image") {
@@ -160,7 +192,8 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                         }
                     }
                 } else {
-                messageImg.gone()
+                    messageImg.gone()
+                    image_progress_me.gone()
             }
 
                 // Format the stored timestamp into a readable String using method.
@@ -191,6 +224,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
         val dateText: TextView = itemView.findViewById(R.id.text_chat_date_other)
         val chatOtherRootLay: LinearLayout = itemView.findViewById(R.id.chat_other_root_lay)
         val chatOtherDeleteBtn: ImageView = itemView.findViewById(R.id.delete_chat_other_btn)
+        val image_progress_other:ProgressBar = itemView.findViewById(R.id.image_progress_other)
 
 
         fun bind(message: Message, context: Context,
@@ -233,8 +267,33 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
             if (message.image != null) {
                 if (message.messageType == "image") {
                     messageImg.visible()
-                    //messageImg.loadUrl(message.image, context)
-                    Glide.with(context).load(message.image).into(messageImg);
+                    image_progress_other.visible()
+                    Glide.with(context)
+                        .load(message.image)
+                        .centerCrop()
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                image_progress_other.gone()
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                dataSource: com.bumptech.glide.load.DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                image_progress_other.gone()
+                                return false
+                            }
+                        })
+                        .into(messageImg)
 
                     messageImg.setOnClickListener {
                         if (message.messageType == "image") {
@@ -247,6 +306,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                     }
                 } else {
                     messageImg.gone()
+                    image_progress_other.gone()
                 }
             }
         }

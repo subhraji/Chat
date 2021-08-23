@@ -127,15 +127,15 @@ fun String.toMultipartFormString(): RequestBody {
     return this.toRequestBody(MultipartBody.FORM)
 }
 
-fun Context.createMultiPart(keyName: String, photoPath: String): MultipartBody.Part {
-    val file = File(photoPath)
+fun Context.createMultiPart(keyName: String, photoPath: File): MultipartBody.Part {
+    //val file = File(photoPath)
     //Log.i("xxx ",file.toString())
 
-    //val compressedImageFile = Compressor.compress(this,file)
-    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+    //val compressedImageFile = Compressor.compress(this, file)
+    val requestFile = photoPath.asRequestBody("image/*".toMediaTypeOrNull())
     Log.i("xxx ",requestFile.toString())
     // MultipartBody.Part is used to send also the actual file name
-    return MultipartBody.Part.createFormData(keyName, file.name, requestFile)
+    return MultipartBody.Part.createFormData(keyName, photoPath.name, requestFile)
 
 }
 

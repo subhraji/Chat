@@ -20,6 +20,9 @@
             app:destination="@id/chatFragment"
             app:popUpTo="@+id/mainFragment"
             />
+        <action
+            android:id="@+id/action_mainFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/contactsListFragment"
@@ -38,4 +41,9 @@
         android:name="com.example.chatapp.view.fragment.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.chatapp.view.fragment.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

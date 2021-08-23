@@ -34,6 +34,7 @@ import com.github.nkzawa.socketio.client.Ack
 import com.github.nkzawa.socketio.client.Socket
 import com.google.gson.Gson
 import com.thekhaeng.pushdownanim.PushDownAnim
+import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_contacts_list.*
 import kotlinx.android.synthetic.main.fragment_friends_chat_image_preview.*
@@ -553,11 +554,12 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
 
             CoroutineScope(Dispatchers.IO).launch {
                 withContext(Dispatchers.Main) {
+                    val file = File(path)
 
+                    val compressedImageFile = Compressor.compress(requireActivity(), file)
 
-                    val imagePart = requireActivity().createMultiPart("image", path)
+                    val imagePart = requireActivity().createMultiPart("image", compressedImageFile)
                     val messageType = "image"
-                    Log.i("imagePart: " ,imagePart.toString())
 
                     uploadFile(userId, messageType, imagePart, message)
                 }
