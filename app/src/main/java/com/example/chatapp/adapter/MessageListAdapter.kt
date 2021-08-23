@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
+import com.example.chatapp.helper.getTimeOnly
 import com.example.chatapp.helper.gone
 import com.example.chatapp.helper.visible
 import com.example.chatapp.view.fragment.FriendsChatImagePreviewFragment
@@ -109,7 +110,7 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
 
         val messageText: TextView = itemView.findViewById(R.id.text_chat_message_me)
         val messageImg: ImageView = itemView.findViewById(R.id.chat_img_view_me)
-        //val timeText: TextView = itemView.findViewById(R.id.text_chat_timestamp_me)
+        val timeText: TextView = itemView.findViewById(R.id.text_chat_timestamp_me)
         val sentMark: ImageView = itemView.findViewById(R.id.sent_mark_img)
         val dateText: TextView = itemView.findViewById(R.id.text_chat_date_me)
         val deleteChatBtn: ImageView = itemView.findViewById(R.id.delete_chat_me_btn)
@@ -162,14 +163,20 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                 messageImg.gone()
             }
 
-            val date = Date(message.sentOn)
-            // Format the stored timestamp into a readable String using method.
+                // Format the stored timestamp into a readable String using method.
+                val date = Date(message.sentOn)
+                timeText.text = date.getTimeOnly()
+
                 if(message.isSeen == true){
-                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN);
+                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN)
+                    sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.done_all_grey))
                 }else if(message.isSent == true){
-                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN);
+
+                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
+
                 }else{
-                    sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_done_24))
+                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
+                    sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_access_time_24))
                 }
             }
         }
@@ -213,8 +220,9 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
             messageText.text = message.msg
             val date = Date(message.sentOn)
             // Format the stored timestamp into a readable String using method.
-            timeText.text = "time"
+            timeText.text = date.getTimeOnly()
             dateText.text = "date"
+
             //nameText.text = message.username;
             // Insert the profile image from the URL into the ImageView.
             /*if (message.image!!.isNotBlank()) profileImage.loadUrl(

@@ -52,6 +52,7 @@
             android:layout_marginStart="8dp"
             android:text="John Grady Cole"
             android:textSize="12sp"
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@+id/image_gchat_profile_other"
             app:layout_constraintTop_toBottomOf="@+id/text_chat_date_other" />
         <LinearLayout

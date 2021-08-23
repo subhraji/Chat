@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.adapter.MessageListAdapter
@@ -113,6 +114,12 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         PushDownAnim.setPushDownAnimTo(chat_btnSend).setOnClickListener {
             sendMessage()
         }
+
+        PushDownAnim.setPushDownAnimTo(chat_frg_back_arrow).setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        chat_frg_phone_no_txt.text = friendsPhoneno
 
         CoroutineScope(Dispatchers.IO).launch {
             size = chatViewModel.getMessageCount(userId!!)
@@ -484,7 +491,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
 
                         val imageUrl = APIConstants.BASE_URL+"/images/"+outcome.data.files[0].filename
 
-                        Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
 
                         val msgUuid = getUniqueUuid()
                         val currentThreadTimeMillis = System.currentTimeMillis()

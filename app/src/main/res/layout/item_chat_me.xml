@@ -63,13 +63,29 @@
                 android:textColor="#ffffff"
                 android:textSize="16sp" />
 
-            <ImageView
-                android:id="@+id/sent_mark_img"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_gravity="end"
-                android:src="@drawable/done_all_grey"
-                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="end">
+                <TextView
+                    android:id="@+id/text_chat_timestamp_me"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="10:00"
+                    android:textColor="#C0C0C0"
+                    android:gravity="center"
+                    android:textSize="10sp" />
+
+                <ImageView
+                    android:id="@+id/sent_mark_img"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/done_all_grey"
+                    android:layout_marginStart="7dp"
+                    />
+            </LinearLayout>
+
 
         </LinearLayout>
 

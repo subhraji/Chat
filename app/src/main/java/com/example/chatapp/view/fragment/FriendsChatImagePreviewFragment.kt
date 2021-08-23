@@ -54,9 +54,11 @@ class FriendsChatImagePreviewFragment(uploadImageListener: UploadImageListener?)
             friends_chat_img_controlLayout.gone()
             chat_img_top_layout.gone()
 
-            Glide.with(requireActivity())
+            /*Glide.with(requireActivity())
                 .load(File(imagePath2!!)) // Uri of the picture
-                .into(friends_chat_imageView)
+                .into(friends_chat_imageView)*/
+            Glide.with(requireActivity()).load(imagePath2).into(friends_chat_imageView);
+
 
         }
 
