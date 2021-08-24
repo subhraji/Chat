@@ -3,13 +3,16 @@ package com.example.chatapp.view.fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
 import com.example.chatapp.adapter.ViewPagerAdapter
+import com.example.chatapp.helper.NewGroupListener
 import com.example.chatapp.view.activity.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import com.thekhaeng.pushdownanim.PushDownAnim
@@ -17,7 +20,8 @@ import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_main.*
 
 
-class MainFragment : Fragment() {
+class MainFragment() : Fragment() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {}
@@ -82,7 +86,6 @@ class MainFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
     }
-
 
     private fun logout(){
         val sharedPreference = requireActivity().getSharedPreferences("TOKEN_PREF",
