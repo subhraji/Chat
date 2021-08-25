@@ -232,7 +232,8 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                  holder: RecyclerView.ViewHolder,
                  chatDeleteClickListener: ChatDeleteClickListener
         ) {
-            //messageImg.gone()
+            messageImg.gone()
+            image_progress_other.gone()
             chatOtherDeleteBtn.gone()
 
             chatOtherRootLay.setOnLongClickListener {

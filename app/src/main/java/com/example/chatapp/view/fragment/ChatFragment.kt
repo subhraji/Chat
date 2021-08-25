@@ -168,18 +168,21 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                         message.sentOn,
                     )
                     messages.isSender = false
-                    if(message.image != ""){
+                    if(message.image != null && message.image != ""){
                         messages.messageType = "image"
                         message.messageType = "image"
+                        Log.i("ckeckImageType","msg type 1 => ${message}")
                         mMessageAdapter.addMessage(message)
 
                     }else{
                         messages.messageType = "text"
                         message.messageType = "text"
+                        Log.i("ckeckImageType","msg type 2 => ${message}")
+
                         mMessageAdapter.addMessage(message)
 
                     }
-                    Log.i("imageType","imagetype => ${message.image+","+message.messageType}")
+                    Log.i("imageType","imagetype => ${messages.image+","+messages.messageType}")
                     saveMessage(messages)
                     sendAckMessage(message.msgUuid, userId, true)
 

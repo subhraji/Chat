@@ -1,5 +1,7 @@
 package com.example.chatapp.model.network
 
+import com.example.chatapp.model.pojo.create_group.CreateGroupRequest
+import com.example.chatapp.model.pojo.create_group.CreateGroupResponse
 import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
 import com.example.chatapp.model.pojo.req_otp.ReqOtpParam
 import com.example.chatapp.model.pojo.req_otp.RequestOtp
@@ -30,4 +32,8 @@ interface ApiInterface {
                                 @Part("message_type") message_type: RequestBody,
                                 @Part image: MultipartBody.Part?,
                                 @Header("Authorization") token: String): UploadImageResponse?
+
+    @POST("/api/create-group")
+    suspend fun createGroup(@Body body: CreateGroupRequest?,
+                             @Header("Authorization") token: String): CreateGroupResponse?
 }
