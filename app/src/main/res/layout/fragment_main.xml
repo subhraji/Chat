@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragment.MainFragment">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/mainAppBarLay"
         android:layout_width="match_parent"
@@ -17,23 +18,21 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/logoutBtn"
+            <ImageView
+                android:id="@+id/main_options_btn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Logout"
-                android:textColor="@color/white"
+                android:layout_height="29dp"
+                android:src="@drawable/ic_three_dot"
                 android:layout_alignParentEnd="true"
-                android:layout_margin="10dp"
-                android:textStyle="bold"
-                android:textSize="15dp"
+                app:tint="@color/white"
+                android:layout_margin="7dp"
                 />
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/purple_700"
-                android:layout_below="@+id/logoutBtn"
+                android:layout_below="@+id/main_options_btn"
                 app:tabTextColor="@color/white"
                 android:scrollbars="horizontal"
                 app:tabIndicatorColor="@color/white">

@@ -29,6 +29,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.*
 
 fun Context.showErrorMsg(): String {
@@ -126,15 +127,15 @@ fun String.toMultipartFormString(): RequestBody {
     return this.toRequestBody(MultipartBody.FORM)
 }
 
-fun Context.createMultiPart(keyName: String, photoPath: String): MultipartBody.Part {
-    val file = File(photoPath)
+fun Context.createMultiPart(keyName: String, photoPath: File): MultipartBody.Part {
+    //val file = File(photoPath)
     //Log.i("xxx ",file.toString())
 
-    //val compressedImageFile = Compressor.compress(this,file)
-    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+    //val compressedImageFile = Compressor.compress(this, file)
+    val requestFile = photoPath.asRequestBody("image/*".toMediaTypeOrNull())
     Log.i("xxx ",requestFile.toString())
     // MultipartBody.Part is used to send also the actual file name
-    return MultipartBody.Part.createFormData(keyName, file.name, requestFile)
+    return MultipartBody.Part.createFormData(keyName, photoPath.name, requestFile)
 
 }
 
@@ -144,4 +145,10 @@ fun ImageView.loadImg(path: Any, context: Context, placeholder: Drawable? = null
         .load(path)
         .placeholder(placeholder)
         .into(this)
+}
+
+fun Date.getTimeOnly(pattern: String = "hh:mm aa"): String {
+
+    val sdf = SimpleDateFormat(pattern, Locale.US)
+    return sdf.format(this)
 }

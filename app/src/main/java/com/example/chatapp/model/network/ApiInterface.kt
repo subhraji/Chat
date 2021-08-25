@@ -1,6 +1,5 @@
 package com.example.chatapp.model.network
 
-import com.example.chatapp.model.pojo.friend_chat.UploadImageReq
 import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
 import com.example.chatapp.model.pojo.req_otp.ReqOtpParam
 import com.example.chatapp.model.pojo.req_otp.RequestOtp
@@ -8,7 +7,6 @@ import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsResponse
 import com.example.chatapp.model.pojo.verify_otp.VerifyOtpReq
 import com.example.chatapp.model.pojo.verify_otp.VerifyOtpResponse
-import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*

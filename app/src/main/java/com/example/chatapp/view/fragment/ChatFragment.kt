@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -18,15 +17,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
+import androidx.navigation.fragment.findNavController
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
-import com.example.chatapp.adapter.ContactListAdapter
 import com.example.chatapp.adapter.MessageListAdapter
 import com.example.chatapp.helper.*
 import com.example.chatapp.model.network.APIConstants
 import com.example.chatapp.model.pojo.chat_user.ChatUser
-import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
 import com.example.chatapp.model.pojo.friend_chat.User
 import com.example.chatapp.model.repo.Outcome
 import com.example.chatapp.viewmodel.ChatUserViewModel
@@ -45,15 +42,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONException
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
-import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -122,6 +116,12 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             sendMessage()
         }
 
+        PushDownAnim.setPushDownAnimTo(chat_frg_back_arrow).setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        chat_frg_phone_no_txt.text = friendsPhoneno
+
         CoroutineScope(Dispatchers.IO).launch {
             size = chatViewModel.getMessageCount(userId!!)
             chatUserSize = chatUserViewModel.isChatUserAvailable(userId!!)
@@ -158,10 +158,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                 val message = Gson().fromJson(messageData.toString(), Message::class.java)
                 if (message.sentBy.id == userId) {
 
-                    Log.i("msgType","messageType = ${message.messageType}")
-
-
-                    mMessageAdapter.addMessage(message)
+                    Log.i("data","data => ${message}")
 
                     val messages = com.eduaid.child.models.pojo.friend_chat.Message(
                         message.msgUuid,
@@ -171,8 +168,18 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                         message.sentOn,
                     )
                     messages.isSender = false
-                    messages.messageType = "text"
+                    if(message.image != ""){
+                        messages.messageType = "image"
+                        message.messageType = "image"
+                        mMessageAdapter.addMessage(message)
 
+                    }else{
+                        messages.messageType = "text"
+                        message.messageType = "text"
+                        mMessageAdapter.addMessage(message)
+
+                    }
+                    Log.i("imageType","imagetype => ${message.image+","+message.messageType}")
                     saveMessage(messages)
                     sendAckMessage(message.msgUuid, userId, true)
 
@@ -483,14 +490,17 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){
-                        Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
+
+                        val imageUrl = APIConstants.BASE_URL+"/images/"+outcome.data.files[0].filename
+
+                        //Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
 
                         val msgUuid = getUniqueUuid()
                         val currentThreadTimeMillis = System.currentTimeMillis()
                         val message = Message(
                             msgUuid,
                             captionMessage,
-                            "https://images.unsplash.com/photo-1498579687545-d5a4fffb0a9e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80",
+                            imageUrl,
                             User(userId, friendsPhoneno),
                             currentThreadTimeMillis
                         )
@@ -519,7 +529,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                             msgUuid,
                             captionMessage,
                             currentThreadTimeMillis,
-                            "",
+                            imageUrl,
                             userId
                         )
 
@@ -545,11 +555,12 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
 
             CoroutineScope(Dispatchers.IO).launch {
                 withContext(Dispatchers.Main) {
+                    val file = File(path)
 
+                    val compressedImageFile = Compressor.compress(requireActivity(), file)
 
-                    val imagePart = requireActivity().createMultiPart("image", path)
+                    val imagePart = requireActivity().createMultiPart("image", compressedImageFile)
                     val messageType = "image"
-                    Log.i("imagePart: " ,imagePart.toString())
 
                     uploadFile(userId, messageType, imagePart, message)
                 }

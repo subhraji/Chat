@@ -1,21 +1,11 @@
 package com.example.chatapp.model.repo.chat_image
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.chatapp.helper.toMultipartFormString
 import com.example.chatapp.model.network.ApiClient
-import com.example.chatapp.model.network.ApiInterface
-import com.example.chatapp.model.pojo.friend_chat.UploadImageReq
 import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
-import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
-import com.example.chatapp.model.pojo.sync_contacts.SyncContactsResponse
-import com.example.chatapp.model.repo.ApiResponse
 import com.example.chatapp.model.repo.Outcome
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 
 class ChatImageUploadRepositoryImpl(context: Context) : ChatImageUploadRepository {
