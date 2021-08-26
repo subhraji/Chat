@@ -129,4 +129,7 @@ dependencies {
 
     //Image compress
     implementation 'id.zelory:compressor:3.0.1'
+
+    //circle image
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

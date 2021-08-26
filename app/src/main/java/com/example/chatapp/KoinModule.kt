@@ -2,6 +2,8 @@ import com.example.chatapp.model.repo.chat_image.ChatImageUploadRepository
 import com.example.chatapp.model.repo.chat_image.ChatImageUploadRepositoryImpl
 import com.example.chatapp.model.repo.create_group.CreateGroupRepository
 import com.example.chatapp.model.repo.create_group.CreateGroupRepositoryImpl
+import com.example.chatapp.model.repo.get_profile.GetProfileRepository
+import com.example.chatapp.model.repo.get_profile.GetProfileRepositoryImpl
 import com.example.chatapp.model.repo.login.LoginRepository
 import org.koin.androidx.compose.get
 import org.koin.dsl.module
@@ -33,5 +35,8 @@ val appModule = module {
 
     single<CreateGroupRepository> { CreateGroupRepositoryImpl(get()) }
     viewModel { CreateGroupViewModel(get(), get()) }
+
+    single<GetProfileRepository> { GetProfileRepositoryImpl(get()) }
+    viewModel { GetProfileViewModel(get()) }
 
 }

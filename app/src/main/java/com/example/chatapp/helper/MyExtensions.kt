@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
+import android.text.Editable
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager

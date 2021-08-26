@@ -3,6 +3,7 @@ package com.example.chatapp.model.network
 import com.example.chatapp.model.pojo.create_group.CreateGroupRequest
 import com.example.chatapp.model.pojo.create_group.CreateGroupResponse
 import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
+import com.example.chatapp.model.pojo.get_profile.GetProfile
 import com.example.chatapp.model.pojo.req_otp.ReqOtpParam
 import com.example.chatapp.model.pojo.req_otp.RequestOtp
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
@@ -36,4 +37,7 @@ interface ApiInterface {
     @POST("/api/create-group")
     suspend fun createGroup(@Body body: CreateGroupRequest?,
                              @Header("Authorization") token: String): CreateGroupResponse?
+
+    @GET("/api/get-user-profile")
+    suspend fun getProfile(@Header("Authorization") token: String): GetProfile?
 }
