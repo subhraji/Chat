@@ -8,6 +8,8 @@ import com.example.chatapp.model.pojo.req_otp.ReqOtpParam
 import com.example.chatapp.model.pojo.req_otp.RequestOtp
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsResponse
+import com.example.chatapp.model.pojo.update_profile.UpdateProfileRequest
+import com.example.chatapp.model.pojo.update_profile.UpdateProfileResponse
 import com.example.chatapp.model.pojo.verify_otp.VerifyOtpReq
 import com.example.chatapp.model.pojo.verify_otp.VerifyOtpResponse
 import okhttp3.MultipartBody
@@ -40,4 +42,8 @@ interface ApiInterface {
 
     @GET("/api/get-user-profile")
     suspend fun getProfile(@Header("Authorization") token: String): GetProfile?
+
+    @POST("/api/update-profile")
+    suspend fun updateProfile(@Body body: UpdateProfileRequest?,
+                             @Header("Authorization") token: String): UpdateProfileResponse?
 }

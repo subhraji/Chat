@@ -88,6 +88,12 @@ fun Activity.hideSoftKeyboard() {
     }
 }
 
+fun View.showKeyboard() {
+    this.requestFocus()
+    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+}
+
 
 fun View.visible() {
     this.visibility = View.VISIBLE
@@ -152,4 +158,21 @@ fun Date.getTimeOnly(pattern: String = "hh:mm aa"): String {
 
     val sdf = SimpleDateFormat(pattern, Locale.US)
     return sdf.format(this)
+}
+
+
+fun getGlideURL(url: String?, context: Context): GlideUrl {
+    return GlideUrl(URL(url), LazyHeaders.Builder()
+        .build())
+}
+
+fun ImageView.loadUrl(url: String?, context: Context, placeholder: Drawable? = null) {
+    try {
+        Glide.with(context)
+            .load(getGlideURL(url, context))
+            .placeholder(placeholder)
+            .into(this)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }

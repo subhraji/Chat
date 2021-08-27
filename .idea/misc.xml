@@ -5,12 +5,13 @@
       <map>
         <entry key="app/src/main/res/layout/contact_list_item.xml" value="0.19791666666666666" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.19791666666666666" />
-        <entry key="app/src/main/res/layout/fragment_chat_list.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/fragment_chat_list.xml" value="0.19" />
         <entry key="app/src/main/res/layout/fragment_group_list.xml" value="0.19791666666666666" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_chat_me.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_chat_other.xml" value="0.19791666666666666" />
         <entry key="app/src/main/res/layout/item_chat_user.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/update_number_layout.xml" value="0.175" />
       </map>
     </option>
   </component>

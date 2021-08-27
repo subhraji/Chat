@@ -28,7 +28,8 @@
             android:layout_gravity="bottom"
             android:layout_margin="7dp"
             android:src="@drawable/ic_baseline_edit_24"
-            app:tint="#000000" />
+            app:tint="#000000"
+            android:background="?android:attr/selectableItemBackground"/>
     </FrameLayout>
     <TextView
         android:id="@+id/name_text_view"
@@ -58,6 +59,8 @@
         android:layout_below="@+id/name_text_view"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="20dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="5dp"
         android:src="@drawable/ic_baseline_edit_24"
         app:tint="#000000" />
 
@@ -83,6 +86,7 @@
         android:background="@color/white"
         android:inputType="number"
         android:textColor="#737373" />
+
     <ImageView
         android:id="@+id/profile_mobile_edit_btn"
         android:layout_width="wrap_content"
@@ -90,7 +94,24 @@
         android:layout_below="@+id/mobile_text_view"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="20dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="5dp"
         android:src="@drawable/ic_baseline_edit_24"
         app:tint="#000000" />
+
+    <Button
+        android:id="@+id/update_profile_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/purple_700"
+        android:text="Save changes"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
 
 </RelativeLayout>

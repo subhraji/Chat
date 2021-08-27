@@ -11,6 +11,8 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import com.example.chatapp.model.repo.login.LoginRepositoryImpl
 import com.example.chatapp.model.repo.sync_contacts.SyncContactsRepository
 import com.example.chatapp.model.repo.sync_contacts.SyncContactsRepositoryImpl
+import com.example.chatapp.model.repo.update_profile.UpdateProfileRepository
+import com.example.chatapp.model.repo.update_profile.UpdateProfileRepositoryImpl
 import com.example.chatapp.model.repo.verify_otp.VerifyOtpRepository
 import com.example.chatapp.model.repo.verify_otp.VerifyOtpRepositoryImpl
 import com.example.chatapp.viewmodel.*
@@ -38,5 +40,8 @@ val appModule = module {
 
     single<GetProfileRepository> { GetProfileRepositoryImpl(get()) }
     viewModel { GetProfileViewModel(get()) }
+
+    single<UpdateProfileRepository> { UpdateProfileRepositoryImpl(get()) }
+    viewModel { UpdateProfileViewModel(get()) }
 
 }
