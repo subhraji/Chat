@@ -22,7 +22,9 @@ import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.helper.getTimeOnly
 import com.example.chatapp.helper.gone
+import com.example.chatapp.helper.loadImg
 import com.example.chatapp.helper.visible
+import com.example.chatapp.view.activity.PDFViewActivity
 import com.example.chatapp.view.fragment.FriendsChatImagePreviewFragment
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.item_chat_user.view.*
@@ -191,26 +193,37 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                             dialogFragment.show(fragmentManager, "signature")
                         }
                     }
+                } else if(message.messageType == "pdf"){
+                    messageImg.loadImg(R.drawable.greyblack_pdf, context)
+                    messageImg.setOnClickListener {
+                        if (message.messageType == "pdf") {
+
+                        }
+                    }
                 } else {
                     messageImg.gone()
                     image_progress_me.gone()
+                }
             }
 
-                // Format the stored timestamp into a readable String using method.
-                val date = Date(message.sentOn)
-                timeText.text = date.getTimeOnly()
 
-                if(message.isSeen == true){
-                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN)
-                    sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.done_all_grey))
-                }else if(message.isSent == true){
 
-                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
 
-                }else{
-                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
-                    sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_access_time_24))
-                }
+
+            // Format the stored timestamp into a readable String using method.
+            val date = Date(message.sentOn)
+            timeText.text = date.getTimeOnly()
+
+            if(message.isSeen == true){
+                sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN)
+                sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.done_all_grey))
+            }else if(message.isSent == true){
+
+                sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
+
+            }else{
+                sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
+                sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_access_time_24))
             }
         }
     }

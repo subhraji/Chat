@@ -3,15 +3,19 @@ package com.example.chatapp.adapter
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.helper.inflate
 import com.example.chatapp.model.pojo.create_group.Group
+import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.item_chat_user.view.*
 
 class GroupListAdapter(private val groupList: MutableList<Group>,
-                       private val context: Context): RecyclerView.Adapter<GroupListAdapter.GroupListViewHolder>()    {
+                       private val context: Context,
+                       private val itemClickListener: GroupItemClickClickLister
+): RecyclerView.Adapter<GroupListAdapter.GroupListViewHolder>()    {
 
 
     inner class GroupListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -37,8 +41,19 @@ class GroupListAdapter(private val groupList: MutableList<Group>,
 
         val group = groupList[position]
         holder.itemView.apply {
+
             chat_user_name_txt.text = group.groupName
+
+            holder.itemView.chatUserListItemRootLay.tag = group
+            PushDownAnim.setPushDownAnimTo(holder.itemView.chatUserListItemRootLay).setOnClickListener {
+                itemClickListener.onItemClicked(it, holder.layoutPosition)
+            }
         }
 
+    }
+
+
+    interface GroupItemClickClickLister {
+        fun onItemClicked(view: View, position: Int)
     }
 }

@@ -36,6 +36,13 @@ interface ApiInterface {
                                 @Part image: MultipartBody.Part?,
                                 @Header("Authorization") token: String): UploadImageResponse?
 
+    @Multipart
+    @POST("/api/upload-media")
+    suspend fun uploadChatPdf(@Part("receiver_id") receiver_id: RequestBody,
+                                @Part("message_type") message_type: RequestBody,
+                                @Part image: MultipartBody.Part?,
+                                @Header("Authorization") token: String): UploadImageResponse?
+
     @POST("/api/create-group")
     suspend fun createGroup(@Body body: CreateGroupRequest?,
                              @Header("Authorization") token: String): CreateGroupResponse?

@@ -50,6 +50,12 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.ContentUris
+
+import android.provider.DocumentsContract
+
+
+
 
 
 private const val USER_ID = "userId"
@@ -73,6 +79,8 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
     private var imageUri: Uri? = null
     private val pickImage = 100
     private val TAKE_PICTURE = 2
+    private val pickPdf = 1
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -159,6 +167,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                 if (message.sentBy.id == userId) {
 
                     Log.i("data","data => ${message}")
+                    Log.i("chekType","msg type 1 => ${message.messageType}")
 
                     val messages = com.eduaid.child.models.pojo.friend_chat.Message(
                         message.msgUuid,
@@ -168,20 +177,10 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                         message.sentOn,
                     )
                     messages.isSender = false
-                    if(message.image != null && message.image != ""){
-                        messages.messageType = "image"
-                        message.messageType = "image"
-                        Log.i("ckeckImageType","msg type 1 => ${message}")
-                        mMessageAdapter.addMessage(message)
+                    messages.messageType = message.messageType
+                    mMessageAdapter.addMessage(message)
 
-                    }else{
-                        messages.messageType = "text"
-                        message.messageType = "text"
-                        Log.i("ckeckImageType","msg type 2 => ${message}")
 
-                        mMessageAdapter.addMessage(message)
-
-                    }
                     Log.i("imageType","imagetype => ${messages.image+","+messages.messageType}")
                     saveMessage(messages)
                     sendAckMessage(message.msgUuid, userId, true)
@@ -295,7 +294,8 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             messageText,
             currentThreadTimeMillis,
             "",
-            userId
+            userId,
+            "text"
         )
         textInput.setText("")
         requireActivity().hideSoftKeyboard()
@@ -306,11 +306,13 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         messageText: String,
         currentThreadTimeMillis: Long,
         image: String? = null,
-        userId: String
+        userId: String,
+        messageType: String = "text"
     ) {
         val jsonMessage = JSONObject()
         jsonMessage.put("msgUuid", msgUuid)
         jsonMessage.put("msg", messageText)
+        jsonMessage.put("messageType", messageType)
         if (image != null)
             jsonMessage.put("image", image)
         jsonMessage.put("sentOn", currentThreadTimeMillis)
@@ -372,7 +374,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
 
     private fun selectImage() {
         val options =
-            arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
+            arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Choose Documents", "Cancel")
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireActivity())
         builder.setTitle("Add Photo!")
         builder.setItems(options, DialogInterface.OnClickListener { dialog, item ->
@@ -383,9 +385,9 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                 "Choose from Gallery" -> {
                     dispatchGalleryIntent()
                 }
-                /*"Upload Pdf" -> {
+                "Choose Documents" -> {
                     dispatchPdfIntent()
-                }*/
+                }
                 "Cancel" -> {
                     dialog.dismiss()
                 }
@@ -393,6 +395,14 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         })
         builder.show()
     }
+
+    private fun dispatchPdfIntent(){
+        val intent = Intent()
+        intent.type = "application/pdf"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select PDF"), pickPdf)
+    }
+
 
     private fun dispatchCameraIntent() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -488,27 +498,32 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
     ) {
         val loader = requireActivity().loadingDialog()
         loader.show()
-        uploadChatImageViewModel.uploadImage(receiver_id,"image",imagePart,accessToken).observe(viewLifecycleOwner,{ outcome->
+        uploadChatImageViewModel.uploadImage(receiver_id,messageType,imagePart,accessToken).observe(viewLifecycleOwner,{ outcome->
             loader.dismiss()
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){
 
-                        val imageUrl = APIConstants.BASE_URL+"/images/"+outcome.data.files[0].filename
 
-                        //Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
+                        val messageContent = if (messageType == "pdf") {
+                            outcome.data.files[0].fieldname
+                        } else {
+                            captionMessage
+                        }
+
+                        val imageUrl = APIConstants.BASE_URL+"/images/"+outcome.data.files[0].filename
 
                         val msgUuid = getUniqueUuid()
                         val currentThreadTimeMillis = System.currentTimeMillis()
                         val message = Message(
                             msgUuid,
-                            captionMessage,
+                            messageContent,
                             imageUrl,
                             User(userId, friendsPhoneno),
                             currentThreadTimeMillis
                         )
                         message.isSender = true
-                        message.messageType = "image"
+                        message.messageType = messageType
 
                         mMessageAdapter.addMessage(message)
                         saveMessage(message)
@@ -533,7 +548,8 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                             captionMessage,
                             currentThreadTimeMillis,
                             imageUrl,
-                            userId
+                            userId,
+                            "image"
                         )
 
                     }else{
@@ -575,6 +591,23 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
     }
 
 
+    private fun uploadPdf(path: String?){
+        CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.Main) {
+                val file = File(path)
+
+                val compressedImageFile = Compressor.compress(requireActivity(), file)
+
+                val imagePart = requireActivity().createMultiPart("pdf", compressedImageFile)
+                val messageType = "pdf"
+
+                uploadFile(userId, messageType, imagePart, "")
+            }
+        }
+    }
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -584,7 +617,9 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                 imageUri = data?.data
                 val path = getRealPathFromUri(imageUri)
                 val imageFile = File(path!!)
-                showImageDialog(imageFile.absolutePath)
+            Log.i("pickPdf", imageFile.absolutePath.toString())
+
+            showImageDialog(imageFile.absolutePath)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -593,12 +628,19 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         } else if (requestCode == TAKE_PICTURE && resultCode == AppCompatActivity.RESULT_OK) {
 
             try {
+                Log.i("pickPdf", image.toString())
 
                 showImageDialog(image.toString())
 
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+
+        }else if (requestCode == pickPdf && resultCode == AppCompatActivity.RESULT_OK){
+            var uri = data?.data
+
+            val path = getRealPathFromUri(uri)
+            Log.i("pickPdf", path.toString())
 
         }
     }

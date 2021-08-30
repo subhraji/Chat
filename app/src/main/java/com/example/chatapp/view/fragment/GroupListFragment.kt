@@ -7,12 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
 import com.example.chatapp.adapter.GroupListAdapter
 import com.example.chatapp.helper.gone
 import com.example.chatapp.helper.loadingDialog
 import com.example.chatapp.helper.visible
+import com.example.chatapp.model.pojo.chat_user.ChatUser
 import com.example.chatapp.model.pojo.create_group.Group
 import com.example.chatapp.model.repo.Outcome
 import com.example.chatapp.viewmodel.CreateGroupViewModel
@@ -21,7 +24,7 @@ import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.fragment_group_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class GroupListFragment() : Fragment() {
+class GroupListFragment() : Fragment(), GroupListAdapter.GroupItemClickClickLister {
     private var mSocket: Socket? = null
     lateinit var accessToken: String
     private val createGroupViewModel: CreateGroupViewModel by viewModel()
@@ -52,7 +55,7 @@ class GroupListFragment() : Fragment() {
         accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
 
 
-        mGroupListAdapter = GroupListAdapter(mutableListOf(),requireActivity())
+        mGroupListAdapter = GroupListAdapter(mutableListOf(),requireActivity(),this@GroupListFragment)
         group_list_recycler.apply {
             adapter = mGroupListAdapter
         }
@@ -125,5 +128,12 @@ class GroupListFragment() : Fragment() {
                 Log.d("userSize","user list size => ${groups.size}")
             }
         })
+    }
+
+
+    override fun onItemClicked(view: View, position: Int) {
+        val groups = view.tag as Group
+        val bundle = bundleOf("groupName" to groups.groupName, "groupId" to groups.id)
+        findNavController().navigate(R.id.groupChatFragment, bundle)
     }
 }

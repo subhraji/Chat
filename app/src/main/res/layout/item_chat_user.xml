@@ -26,10 +26,9 @@
         android:id="@+id/chat_user_msg_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="dgdhhd"
         android:layout_below="@+id/chat_user_name_txt"
-        android:layout_toRightOf="@+id/chat_user_img"
         android:layout_marginStart="20dp"
-        android:textSize="13dp"
-        />
+        android:layout_toRightOf="@+id/chat_user_img"
+        android:text="FILE"
+        android:textSize="13dp" />
 </RelativeLayout>
