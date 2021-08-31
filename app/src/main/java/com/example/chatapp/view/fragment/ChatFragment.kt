@@ -50,12 +50,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import android.content.ContentUris
-
-import android.provider.DocumentsContract
-
-
-
 
 
 private const val USER_ID = "userId"
@@ -79,7 +73,8 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
     private var imageUri: Uri? = null
     private val pickImage = 100
     private val TAKE_PICTURE = 2
-    private val pickPdf = 1
+    //private val pickPdf = 1
+    private val PDF_REQUEST_CODE = 101
 
 
 
@@ -89,8 +84,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             userId = it.getString(USER_ID).toString()
             friendsPhoneno = it.getString("phoneno").toString()
         }
-
-        Log.i("arguments","phone no => ${friendsPhoneno} user id => ${userId}")
     }
 
     override fun onCreateView(
@@ -167,22 +160,27 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                 if (message.sentBy.id == userId) {
 
                     Log.i("data","data => ${message}")
-                    Log.i("chekType","msg type 1 => ${message.messageType}")
+                    Log.i("chekType","msg type 1 => ${message.image}")
+                    val msgContent = if (message.messageType == "pdf") {
+                        "file"
+                    } else {
+                        message.msg
+                    }
 
-                    val messages = com.eduaid.child.models.pojo.friend_chat.Message(
+                    val messagesList = com.eduaid.child.models.pojo.friend_chat.Message(
                         message.msgUuid,
-                        message.msg,
+                        msgContent,
                         message.image,
                         com.example.chatapp.model.pojo.friend_chat.User(message.sentBy.id,message.sentBy.phoneno),
                         message.sentOn,
                     )
-                    messages.isSender = false
-                    messages.messageType = message.messageType
+                    messagesList.isSender = false
+                    messagesList.messageType = message.messageType
                     mMessageAdapter.addMessage(message)
 
 
-                    Log.i("imageType","imagetype => ${messages.image+","+messages.messageType}")
-                    saveMessage(messages)
+                    Log.i("chekType","imagetype => ${messagesList.messageType}")
+                    saveMessage(messagesList)
                     sendAckMessage(message.msgUuid, userId, true)
 
                     /*chat user save*/
@@ -194,7 +192,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                             val chatUser = ChatUser(
                                 message.sentBy.id,
                                 message.sentBy.phoneno,
-                                message.msg,
+                                msgContent,
                                 "",
                                 message.sentOn
                             )
@@ -396,11 +394,12 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         builder.show()
     }
 
-    private fun dispatchPdfIntent(){
+    private fun dispatchPdfIntent() {
         val intent = Intent()
         intent.type = "application/pdf"
         intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Select PDF"), pickPdf)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        startActivityForResult(intent, PDF_REQUEST_CODE)
     }
 
 
@@ -496,6 +495,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         imagePart: MultipartBody.Part,
         captionMessage: String = ""
     ) {
+        Log.i("part","part => ${imagePart}")
         val loader = requireActivity().loadingDialog()
         loader.show()
         uploadChatImageViewModel.uploadImage(receiver_id,messageType,imagePart,accessToken).observe(viewLifecycleOwner,{ outcome->
@@ -524,7 +524,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                         )
                         message.isSender = true
                         message.messageType = messageType
-
+                        message.fileName = outcome.data.files[0].originalname
                         mMessageAdapter.addMessage(message)
                         saveMessage(message)
 
@@ -532,7 +532,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                         val chatUser = ChatUser(
                             userId,
                             friendsPhoneno,
-                            captionMessage,
+                            outcome.data.files[0].filename,
                             "",
                             currentThreadTimeMillis
                         )
@@ -549,7 +549,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                             currentThreadTimeMillis,
                             imageUrl,
                             userId,
-                            "image"
+                            messageType
                         )
 
                     }else{
@@ -575,10 +575,9 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             CoroutineScope(Dispatchers.IO).launch {
                 withContext(Dispatchers.Main) {
                     val file = File(path)
-
                     val compressedImageFile = Compressor.compress(requireActivity(), file)
 
-                    val imagePart = requireActivity().createMultiPart("image", compressedImageFile)
+                    val imagePart = requireActivity().createMultiPart("file", compressedImageFile)
                     val messageType = "image"
 
                     uploadFile(userId, messageType, imagePart, message)
@@ -589,24 +588,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             e.printStackTrace()
         }
     }
-
-
-    private fun uploadPdf(path: String?){
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.Main) {
-                val file = File(path)
-
-                val compressedImageFile = Compressor.compress(requireActivity(), file)
-
-                val imagePart = requireActivity().createMultiPart("pdf", compressedImageFile)
-                val messageType = "pdf"
-
-                uploadFile(userId, messageType, imagePart, "")
-            }
-        }
-    }
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -636,14 +617,22 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                 e.printStackTrace()
             }
 
-        }else if (requestCode == pickPdf && resultCode == AppCompatActivity.RESULT_OK){
-            var uri = data?.data
+        }else if (requestCode == PDF_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
+            if (data != null) {
+                val pdfData = data.data
+                Log.d("pdfData","PDF DATA = $pdfData")
 
-            val path = getRealPathFromUri(uri)
-            Log.i("pickPdf", path.toString())
+                val path = FilePath.getPath(requireActivity(), pdfData!!)
+                val pdfPart = requireActivity().createMultiPartFile("file", path!!)
+                val messageType = "pdf"
+                uploadFile(userId, messageType, pdfPart)
+            }
 
         }
+
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

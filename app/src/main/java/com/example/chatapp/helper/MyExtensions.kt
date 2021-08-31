@@ -1,6 +1,7 @@
 package com.example.chatapp.helper
 import android.app.Activity
 import android.app.Dialog
+import android.app.ProgressDialog.show
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -13,6 +14,7 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
@@ -135,17 +137,21 @@ fun String.toMultipartFormString(): RequestBody {
 }
 
 fun Context.createMultiPart(keyName: String, photoPath: File): MultipartBody.Part {
-    //val file = File(photoPath)
-    //Log.i("xxx ",file.toString())
 
-    //val compressedImageFile = Compressor.compress(this, file)
     val requestFile = photoPath.asRequestBody("image/*".toMediaTypeOrNull())
     Log.i("xxx ",requestFile.toString())
-    // MultipartBody.Part is used to send also the actual file name
     return MultipartBody.Part.createFormData(keyName, photoPath.name, requestFile)
 
 }
 
+
+fun Context.createMultiPartFile(keyName: String, photoPath: String): MultipartBody.Part {
+    val file = File(photoPath)
+
+    // MultipartBody.Part is used to send also the actual file name
+    return MultipartBody.Part.createFormData(keyName, file.name, file.asRequestBody("image/*".toMediaTypeOrNull()))
+
+}
 
 fun ImageView.loadImg(path: Any, context: Context, placeholder: Drawable? = null) {
     Glide.with(context)

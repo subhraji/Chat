@@ -28,8 +28,14 @@ import com.example.chatapp.view.activity.PDFViewActivity
 import com.example.chatapp.view.fragment.FriendsChatImagePreviewFragment
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.item_chat_user.view.*
+import org.jetbrains.anko.startActivity
 import java.util.*
 import javax.sql.DataSource
+import androidx.core.content.ContextCompat.startActivity
+
+import android.content.Intent
+import android.net.Uri
+
 
 class MessageListAdapter(private val messageList: MutableList<Message>,
                          private val fragmentManager: FragmentManager,
@@ -197,7 +203,14 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                     messageImg.loadImg(R.drawable.greyblack_pdf, context)
                     messageImg.setOnClickListener {
                         if (message.messageType == "pdf") {
+                            /*context.startActivity<PDFViewActivity>(
+                                "pdfUrl" to message.image,
+                                "pdfName" to message.fileName
+                            )*/
 
+
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(message.image))
+                            context.startActivity(browserIntent)
                         }
                     }
                 } else {
@@ -316,6 +329,17 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                             val dialogFragment = FriendsChatImagePreviewFragment(null)
                             dialogFragment.arguments = bundle
                             dialogFragment.show(fragmentManager, "signature")
+                        }
+                    }
+                }else if(message.messageType == "pdf"){
+                    messageImg.visible()
+                    messageImg.loadImg(R.drawable.greyblack_pdf, context)
+                    messageImg.setOnClickListener {
+                        if (message.messageType == "pdf") {
+                            context.startActivity<PDFViewActivity>(
+                                "pdfUrl" to message.image,
+                                "pdfName" to message.fileName
+                            )
                         }
                     }
                 } else {
