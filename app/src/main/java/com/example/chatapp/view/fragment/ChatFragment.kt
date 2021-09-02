@@ -160,7 +160,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                 if (message.sentBy.id == userId) {
 
                     Log.i("data","data => ${message}")
-                    Log.i("chekType","msg type 1 => ${message.image}")
+                    Log.i("fileName","msg type 1 => ${message.fileName}")
                     val msgContent = if (message.messageType == "pdf") {
                         "file"
                     } else {
@@ -176,10 +176,11 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                     )
                     messagesList.isSender = false
                     messagesList.messageType = message.messageType
+                    messagesList.fileName = message.fileName
                     mMessageAdapter.addMessage(message)
 
 
-                    Log.i("chekType","imagetype => ${messagesList.messageType}")
+                    Log.i("fileName","fileName => ${messagesList.fileName}")
                     saveMessage(messagesList)
                     sendAckMessage(message.msgUuid, userId, true)
 
@@ -305,7 +306,8 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         currentThreadTimeMillis: Long,
         image: String? = null,
         userId: String,
-        messageType: String = "text"
+        messageType: String = "text",
+        fileName: String? = null
     ) {
         val jsonMessage = JSONObject()
         jsonMessage.put("msgUuid", msgUuid)
@@ -313,6 +315,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         jsonMessage.put("messageType", messageType)
         if (image != null)
             jsonMessage.put("image", image)
+            jsonMessage.put("fileName", fileName)
         jsonMessage.put("sentOn", currentThreadTimeMillis)
         jsonMessage.put("userId", userId)
 
@@ -549,7 +552,8 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                             currentThreadTimeMillis,
                             imageUrl,
                             userId,
-                            messageType
+                            messageType,
+                            outcome.data.files[0].originalname
                         )
 
                     }else{

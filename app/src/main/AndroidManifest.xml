@@ -30,7 +30,8 @@
         android:theme="@style/Theme.ChatApp">
         <activity
             android:name=".view.activity.PDFViewActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"

@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
+import android.os.Environment
 import android.text.Editable
 import android.util.Log
 import android.view.*
@@ -181,4 +182,15 @@ fun ImageView.loadUrl(url: String?, context: Context, placeholder: Drawable? = n
     } catch (e: Exception) {
         e.printStackTrace()
     }
+}
+
+fun getFilePath(folder: String = "images", fileName: String): File {
+
+    val file = File(
+        Environment
+            .getExternalStorageDirectory().toString()
+                + File.separator + "assets" + File.separator
+                + folder + File.separator + fileName
+    )
+    return file
 }

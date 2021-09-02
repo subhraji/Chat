@@ -203,14 +203,10 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                     messageImg.loadImg(R.drawable.greyblack_pdf, context)
                     messageImg.setOnClickListener {
                         if (message.messageType == "pdf") {
-                            /*context.startActivity<PDFViewActivity>(
+                            context.startActivity<PDFViewActivity>(
                                 "pdfUrl" to message.image,
                                 "pdfName" to message.fileName
-                            )*/
-
-
-                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(message.image))
-                            context.startActivity(browserIntent)
+                            )
                         }
                     }
                 } else {
@@ -218,9 +214,6 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                     image_progress_me.gone()
                 }
             }
-
-
-
 
 
             // Format the stored timestamp into a readable String using method.
