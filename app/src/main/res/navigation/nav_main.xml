@@ -50,5 +50,14 @@
         android:id="@+id/groupChatFragment"
         android:name="com.example.chatapp.view.fragment.GroupChatFragment"
         android:label="fragment_group_chat"
-        tools:layout="@layout/fragment_group_chat" />
+        tools:layout="@layout/fragment_group_chat" >
+        <action
+            android:id="@+id/action_groupChatFragment_to_addContactList"
+            app:destination="@id/addContactList" />
+    </fragment>
+    <fragment
+        android:id="@+id/addContactList"
+        android:name="com.example.chatapp.view.fragment.AddContactList"
+        android:label="fragment_add_contact_list"
+        tools:layout="@layout/fragment_add_contact_list" />
 </navigation>

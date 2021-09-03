@@ -41,7 +41,8 @@ class GroupChatFragment : Fragment() {
         }
 
         PushDownAnim.setPushDownAnimTo(add_member_btn).setOnClickListener {
-
+            val bottomSheet = AddContactList()
+            bottomSheet.show(requireActivity().supportFragmentManager, "AddContactList")
         }
     }
 

@@ -7,6 +7,7 @@
         <entry key="app/src/main/res/drawable/add_member_btn_bg.xml" value="0.16666666666666666" />
         <entry key="app/src/main/res/layout/activity_pdfview.xml" value="0.17552083333333332" />
         <entry key="app/src/main/res/layout/contact_list_item.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/fragment_add_contact_list.xml" value="0.17552083333333332" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.19791666666666666" />
         <entry key="app/src/main/res/layout/fragment_chat_list.xml" value="0.19" />
         <entry key="app/src/main/res/layout/fragment_group_chat.xml" value="0.22" />
