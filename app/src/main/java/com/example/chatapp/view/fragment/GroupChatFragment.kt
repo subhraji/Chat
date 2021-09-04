@@ -1,6 +1,7 @@
 package com.example.chatapp.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,8 @@ class GroupChatFragment : Fragment() {
 
             groupId = it.getString("groupId").toString()
             groupName = it.getString("groupName").toString()
+
+            Log.i("groupId",groupId)
         }
     }
 
@@ -42,6 +45,9 @@ class GroupChatFragment : Fragment() {
 
         PushDownAnim.setPushDownAnimTo(add_member_btn).setOnClickListener {
             val bottomSheet = AddContactList()
+            val bundle = Bundle()
+            bundle.putString("groupId", groupId)
+            bottomSheet.arguments = bundle
             bottomSheet.show(requireActivity().supportFragmentManager, "AddContactList")
         }
     }

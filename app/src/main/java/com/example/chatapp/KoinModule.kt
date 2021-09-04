@@ -1,3 +1,5 @@
+import com.example.chatapp.model.repo.add_group_members.AddGroupMemberRepository
+import com.example.chatapp.model.repo.add_group_members.AddGroupMemberRepositoryImpl
 import com.example.chatapp.model.repo.chat_image.ChatImageUploadRepository
 import com.example.chatapp.model.repo.chat_image.ChatImageUploadRepositoryImpl
 import com.example.chatapp.model.repo.create_group.CreateGroupRepository
@@ -43,5 +45,8 @@ val appModule = module {
 
     single<UpdateProfileRepository> { UpdateProfileRepositoryImpl(get()) }
     viewModel { UpdateProfileViewModel(get()) }
+
+    single<AddGroupMemberRepository> { AddGroupMemberRepositoryImpl(get()) }
+    viewModel { AddGroupMembersViewModel(get()) }
 
 }

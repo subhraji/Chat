@@ -7,6 +7,13 @@
     tools:context=".view.fragment.AddContactList"
     android:padding="10dp">
 
+    <ProgressBar
+        android:id="@+id/progressBar_ag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/add_contact_to_group_recycler"
         android:layout_width="match_parent"

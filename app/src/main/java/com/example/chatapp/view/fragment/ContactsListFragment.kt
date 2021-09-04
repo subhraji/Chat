@@ -128,6 +128,7 @@ class ContactsListFragment : Fragment() {
                         val user = outcome.data.user
                         val userList = listOf<User>(user)
                         contactListRecycler.adapter = ContactListAdapter(userList,requireActivity())
+                        Log.i("clUser",user.toString())
                     }else{
                         Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
                     }

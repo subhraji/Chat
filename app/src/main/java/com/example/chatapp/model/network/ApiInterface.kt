@@ -1,5 +1,7 @@
 package com.example.chatapp.model.network
 
+import com.example.chatapp.model.pojo.add_user_to_group.AddUserToGroupReq
+import com.example.chatapp.model.pojo.add_user_to_group.AddUserToGroupResponse
 import com.example.chatapp.model.pojo.create_group.CreateGroupRequest
 import com.example.chatapp.model.pojo.create_group.CreateGroupResponse
 import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
@@ -36,13 +38,6 @@ interface ApiInterface {
                                 @Part image: MultipartBody.Part?,
                                 @Header("Authorization") token: String): UploadImageResponse?
 
-    @Multipart
-    @POST("/api/upload-media")
-    suspend fun uploadChatPdf(@Part("receiver_id") receiver_id: RequestBody,
-                                @Part("message_type") message_type: RequestBody,
-                                @Part image: MultipartBody.Part?,
-                                @Header("Authorization") token: String): UploadImageResponse?
-
     @POST("/api/create-group")
     suspend fun createGroup(@Body body: CreateGroupRequest?,
                              @Header("Authorization") token: String): CreateGroupResponse?
@@ -53,4 +48,8 @@ interface ApiInterface {
     @POST("/api/update-profile")
     suspend fun updateProfile(@Body body: UpdateProfileRequest?,
                              @Header("Authorization") token: String): UpdateProfileResponse?
+
+    @POST("/api/add-users-to-group")
+    suspend fun addGroupMember(@Body body: AddUserToGroupReq?,
+                               @Header("Authorization") token: String): AddUserToGroupResponse?
 }
