@@ -73,7 +73,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
     private var imageUri: Uri? = null
     private val pickImage = 100
     private val TAKE_PICTURE = 2
-    //private val pickPdf = 1
     private val PDF_REQUEST_CODE = 101
 
 
