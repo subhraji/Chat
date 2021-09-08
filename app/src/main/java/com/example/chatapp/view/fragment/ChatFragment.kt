@@ -150,8 +150,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
 
     private val chatMessageListener = Emitter.Listener {
         requireActivity().runOnUiThread {
-            Log.i("checkList","reached here")
-
             val data = it[0] as JSONObject
             try {
                 val messageData = data.getJSONObject("data")

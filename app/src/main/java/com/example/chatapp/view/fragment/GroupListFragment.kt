@@ -12,16 +12,22 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
 import com.example.chatapp.adapter.GroupListAdapter
+import com.example.chatapp.helper.SocketHelper
 import com.example.chatapp.helper.gone
 import com.example.chatapp.helper.loadingDialog
 import com.example.chatapp.helper.visible
 import com.example.chatapp.model.pojo.chat_user.ChatUser
 import com.example.chatapp.model.pojo.create_group.Group
+import com.example.chatapp.model.pojo.group_chat.GroupMessage
 import com.example.chatapp.model.repo.Outcome
 import com.example.chatapp.viewmodel.CreateGroupViewModel
+import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
+import com.google.gson.Gson
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.fragment_group_list.*
+import org.json.JSONException
+import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GroupListFragment() : Fragment(), GroupListAdapter.GroupItemClickClickLister {
@@ -50,6 +56,7 @@ class GroupListFragment() : Fragment(), GroupListAdapter.GroupItemClickClickList
 
         create_group_card.gone()
 
+
         val sharedPreference = requireActivity().getSharedPreferences("TOKEN_PREF",
             Context.MODE_PRIVATE)
         accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
@@ -60,6 +67,7 @@ class GroupListFragment() : Fragment(), GroupListAdapter.GroupItemClickClickList
             adapter = mGroupListAdapter
         }
 
+        initSocket()
 
         PushDownAnim.setPushDownAnimTo(add_group_btn).setOnClickListener {
             create_group_card.visible()
@@ -72,6 +80,49 @@ class GroupListFragment() : Fragment(), GroupListAdapter.GroupItemClickClickList
 
         getGroups()
 
+    }
+
+    private fun initSocket() {
+        while (mSocket == null) {
+            mSocket = SocketHelper.loginSocket(requireContext())
+        }
+        //listeners
+        mSocket?.let { socket ->
+            socket.on("added group", addGroupListener)
+        }
+        mSocket?.connect()
+        Log.d("Socket_connected_gr", "Socket_connected => ${mSocket?.connected()}")
+    }
+
+
+    private val addGroupListener = Emitter.Listener {
+        requireActivity().runOnUiThread {
+            val data = it[0] as JSONObject
+            Log.d("group_data", "group_data1 => $data")
+            try {
+                val messageData = data.getJSONObject("data")
+                val message = Gson().fromJson(messageData.toString(), Group::class.java)
+
+                if(message!=null){
+                    Log.d("group_data", "group_data_msg => $messageData")
+                    val group = Group(
+                        message.createdBy,
+                        message.groupImage,
+                        message.groupName,
+                        message.id,
+                        message.userGroup
+                    )
+                    saveGroup(group)
+                    mGroupListAdapter.addGroup(group)
+
+
+                }
+
+            } catch (e: JSONException) {
+                Log.d("Socket_connected_gr","group exception -> ${e.message}")
+                e.printStackTrace()
+            }
+        }
     }
 
 

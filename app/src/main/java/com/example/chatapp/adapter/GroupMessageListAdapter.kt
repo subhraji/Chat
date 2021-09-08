@@ -18,19 +18,19 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.helper.getTimeOnly
 import com.example.chatapp.helper.gone
 import com.example.chatapp.helper.loadImg
 import com.example.chatapp.helper.visible
+import com.example.chatapp.model.pojo.group_chat.GroupMessage
 import com.example.chatapp.view.activity.PDFViewActivity
 import com.example.chatapp.view.fragment.FriendsChatImagePreviewFragment
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.jetbrains.anko.startActivity
 import java.util.*
 
-class GroupMessageListAdapter(private val messageList: MutableList<Message>,
+class GroupMessageListAdapter(private val messageList: MutableList<GroupMessage>,
                               private val fragmentManager: FragmentManager):
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -86,12 +86,12 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
         return messageList.size
     }
 
-    fun addMessage(message: Message) {
+    fun addMessage(message: GroupMessage) {
         messageList.add(message)
         notifyItemInserted(messageList.size - 1)
     }
 
-    fun addAllMessages(messages: List<Message>) {
+    fun addAllMessages(messages: List<GroupMessage>) {
         messageList.addAll(0, messages)
         notifyItemRangeInserted(0, messages.size)
     }
@@ -109,7 +109,7 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
         val image_progress_me: ProgressBar = itemView.findViewById(R.id.image_progress_me)
 
         fun bind(
-            message: Message,
+            message: GroupMessage,
             context: Context,
             fragmentManager: FragmentManager,
             holder: RecyclerView.ViewHolder
@@ -128,19 +128,19 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
                 deleteChatBtn.gone()
             }*/
 
-            if(message.msg == ""){
+            if(message.message == ""){
                 messageText.gone()
             }else{
                 messageText.visible()
             }
 
-            messageText.text = message.msg
-            if (message.image != null) {
+            messageText.text = message.message
+            if (message.media != null) {
                 if (message.messageType == "image") {
                     messageImg.visible()
                     image_progress_me.visible()
                     Glide.with(context)
-                        .load(message.image)
+                        .load(message.media)
                         .centerCrop()
                         .listener(object : RequestListener<Drawable> {
                             override fun onLoadFailed(
@@ -169,7 +169,7 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
                     messageImg.setOnClickListener {
                         if(message.messageType == "image") {
                             val bundle = Bundle()
-                            bundle.putString("image", message.image)
+                            bundle.putString("image", message.media)
                             val dialogFragment = FriendsChatImagePreviewFragment(null)
                             dialogFragment.arguments = bundle
                             dialogFragment.show(fragmentManager, "signature")
@@ -180,7 +180,7 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
                     messageImg.setOnClickListener {
                         if (message.messageType == "pdf") {
                             context.startActivity<PDFViewActivity>(
-                                "pdfUrl" to message.image,
+                                "pdfUrl" to message.media,
                                 "pdfName" to message.fileName
                             )
                         }
@@ -193,10 +193,10 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
 
 
             // Format the stored timestamp into a readable String using method.
-            val date = Date(message.sentOn)
-            timeText.text = date.getTimeOnly()
+            /*val date = Date(message.sentOn)
+            timeText.text = date.getTimeOnly()*/
 
-            if(message.isSeen == true){
+            /*if(message.isSeen == true){
                 sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN)
                 sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.done_all_grey))
             }else if(message.isSent == true){
@@ -206,7 +206,7 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
             }else{
                 sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
                 sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_access_time_24))
-            }
+            }*/
         }
     }
 
@@ -222,7 +222,7 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
         val image_progress_other:ProgressBar = itemView.findViewById(R.id.image_progress_other)
 
 
-        fun bind(message: Message, context: Context,
+        fun bind(message: GroupMessage, context: Context,
                  fragmentManager: FragmentManager,
                  holder: RecyclerView.ViewHolder
         ) {
@@ -241,16 +241,18 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
                 chatOtherDeleteBtn.gone()
             }*/
 
-            if (message.msg == "") {
+            if (message.message == "") {
                 messageText.gone()
             } else {
                 messageText.visible()
             }
-            messageText.text = message.msg
-            val date = Date(message.sentOn)
+            messageText.text = message.message
+
+
+            /*val date = Date(message.sentOn)
             // Format the stored timestamp into a readable String using method.
             timeText.text = date.getTimeOnly()
-            dateText.text = "date"
+            dateText.text = "date"*/
 
             //nameText.text = message.username;
             // Insert the profile image from the URL into the ImageView.
@@ -259,12 +261,12 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
                 context
             )*/
 
-            if (message.image != null) {
+            if (message.media != null) {
                 if (message.messageType == "image") {
                     messageImg.visible()
                     image_progress_other.visible()
                     Glide.with(context)
-                        .load(message.image)
+                        .load(message.media)
                         .centerCrop()
                         .listener(object : RequestListener<Drawable> {
                             override fun onLoadFailed(
@@ -293,7 +295,7 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
                     messageImg.setOnClickListener {
                         if (message.messageType == "image") {
                             val bundle = Bundle()
-                            bundle.putString("image", message.image)
+                            bundle.putString("image", message.media)
                             val dialogFragment = FriendsChatImagePreviewFragment(null)
                             dialogFragment.arguments = bundle
                             dialogFragment.show(fragmentManager, "signature")
@@ -305,7 +307,7 @@ class GroupMessageListAdapter(private val messageList: MutableList<Message>,
                     messageImg.setOnClickListener {
                         if (message.messageType == "pdf") {
                             context.startActivity<PDFViewActivity>(
-                                "pdfUrl" to message.image,
+                                "pdfUrl" to message.media,
                                 "pdfName" to message.fileName
                             )
                         }

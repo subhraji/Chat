@@ -96,7 +96,7 @@ class GroupChatFragment : Fragment() {
         }
         //listeners
         mSocket?.let { socket ->
-            socket.on("group message", chatMessageListener)
+            socket.on(groupId, chatMessageListener)
         }
 
         mSocket?.connect()
@@ -105,14 +105,11 @@ class GroupChatFragment : Fragment() {
 
     private val chatMessageListener = Emitter.Listener {
         requireActivity().runOnUiThread {
-            Log.i("checkList","reached here")
-
             val data = it[0] as JSONObject
+            Log.i("groupChatData","groupChatData => ${data}")
             try {
                 val messageData = data.getJSONObject("data")
                 val message = Gson().fromJson(messageData.toString(), GroupMessage::class.java)
-
-                    Log.d("data","data -> ${data}")
 
             } catch (e: JSONException) {
                 Log.d("Socket_connected","exception -> ${e.message}")
@@ -122,60 +119,55 @@ class GroupChatFragment : Fragment() {
     }
 
     private fun sendMessage() {
-        val messageText = textInput.text.toString().trim()
+        val messageText = textInput_gr.text.toString().trim()
         if (messageText.isEmpty()) {
-            textInput.error = "message cannot be empty"
+            textInput_gr.error = "message cannot be empty"
             return
         }
         //val id = (0..1).random()
         val currentThreadTimeMillis = System.currentTimeMillis()
         val msgUuid = currentThreadTimeMillis.toString()
 
-        val message = com.eduaid.child.models.pojo.friend_chat.Message(
+
+        val groupMessage = GroupMessage(
             msgUuid,
             messageText,
             "",
-            com.example.chatapp.model.pojo.friend_chat.User(userId,"friendsPhoneno"),
-            currentThreadTimeMillis,
+            groupId
         )
-        message.isSender = true
-        message.messageType = "text"
-        message.isSent = true
+        groupMessage.isSender = true
+        groupMessage.messageType = "text"
+        groupMessage.isSent = true
 
-        mGroupMessageListAdapter.addMessage(message)
+        mGroupMessageListAdapter.addMessage(groupMessage)
 
 
         Log.d("emitting send message","emitting send message")
         emitMessage(
             msgUuid,
             messageText,
-            currentThreadTimeMillis,
-            "",
-            userId,
+            null,
             "text"
         )
-        textInput.setText("")
+        textInput_gr.setText("")
         requireActivity().hideSoftKeyboard()
     }
 
     private fun emitMessage(
         msgUuid: String,
         messageText: String,
-        currentThreadTimeMillis: Long,
         image: String? = null,
-        userId: String,
         messageType: String = "text",
         fileName: String? = null
     ) {
         val jsonMessage = JSONObject()
-        jsonMessage.put("msgUuid", msgUuid)
-        jsonMessage.put("msg", messageText)
+        jsonMessage.put("messageUuid", msgUuid)
+        jsonMessage.put("message", messageText)
         jsonMessage.put("messageType", messageType)
         if (image != null)
-            jsonMessage.put("image", image)
+            jsonMessage.put("media", image)
         jsonMessage.put("fileName", fileName)
-        jsonMessage.put("sentOn", currentThreadTimeMillis)
-        jsonMessage.put("userId", userId)
+        jsonMessage.put("groupId", groupId)
 
         Log.d("Emit","emit started")
         mSocket?.emit("group message", jsonMessage.toString(), Ack {
