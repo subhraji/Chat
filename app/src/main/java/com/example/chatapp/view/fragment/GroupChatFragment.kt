@@ -9,25 +9,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.adapter.GroupMessageListAdapter
-import com.example.chatapp.adapter.MessageListAdapter
 import com.example.chatapp.helper.SocketHelper
 import com.example.chatapp.helper.hideSoftKeyboard
-import com.example.chatapp.model.pojo.chat_user.ChatUser
 import com.example.chatapp.model.pojo.group_chat.GroupMessage
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Ack
 import com.github.nkzawa.socketio.client.Socket
 import com.google.gson.Gson
 import com.thekhaeng.pushdownanim.PushDownAnim
-import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_group_chat.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -71,7 +63,7 @@ class GroupChatFragment : Fragment() {
         }
 
         PushDownAnim.setPushDownAnimTo(add_member_btn).setOnClickListener {
-            val bottomSheet = AddContactList()
+            val bottomSheet = AddContactListFragment()
             val bundle = Bundle()
             bundle.putString("groupId", groupId)
             bottomSheet.arguments = bundle
@@ -96,11 +88,11 @@ class GroupChatFragment : Fragment() {
         }
         //listeners
         mSocket?.let { socket ->
-            socket.on(groupId, chatMessageListener)
+            socket.on("group_msg", chatMessageListener)
         }
 
         mSocket?.connect()
-        Log.d("Socket_connected", "Socket_connected => ${mSocket?.connected()}")
+        Log.d("group_socket", "Socket_connected => ${mSocket?.connected()}")
     }
 
     private val chatMessageListener = Emitter.Listener {

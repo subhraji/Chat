@@ -12,10 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
 import com.example.chatapp.adapter.GroupListAdapter
-import com.example.chatapp.helper.SocketHelper
-import com.example.chatapp.helper.gone
-import com.example.chatapp.helper.loadingDialog
-import com.example.chatapp.helper.visible
+import com.example.chatapp.helper.*
 import com.example.chatapp.model.pojo.chat_user.ChatUser
 import com.example.chatapp.model.pojo.create_group.Group
 import com.example.chatapp.model.pojo.group_chat.GroupMessage
@@ -25,6 +22,7 @@ import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
 import com.google.gson.Gson
 import com.thekhaeng.pushdownanim.PushDownAnim
+import kotlinx.android.synthetic.main.fragment_group_chat.*
 import kotlinx.android.synthetic.main.fragment_group_list.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -131,6 +129,8 @@ class GroupListFragment() : Fragment(), GroupListAdapter.GroupItemClickClickList
         loader.show()
         createGroupViewModel.createGroup(group_name, group_image, accessToken).observe(requireActivity(), { outcome ->
             loader.dismiss()
+            group_name_txt.setText("")
+            requireActivity().hideSoftKeyboard()
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){

@@ -5,38 +5,38 @@
     android:orientation="horizontal"
     android:layout_margin="10dp"
     android:padding="5dp"
-    android:id="@+id/chatUserListItemRootLay"
+    android:id="@+id/groupListItemRootLay"
     android:background="?android:attr/selectableItemBackground">
-
     <ImageView
-        android:id="@+id/chat_user_img"
+        android:id="@+id/group_list_user_img"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:background="@drawable/ic_baseline_person_24" />
+        android:background="@drawable/ic_baseline_person_24"/>
+
     <TextView
-        android:id="@+id/chat_user_name_txt"
+        android:id="@+id/group_list_user_name_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Manish"
         android:layout_marginStart="20dp"
-        android:layout_toRightOf="@+id/chat_user_img"
+        android:layout_toRightOf="@+id/group_list_user_img"
+        android:text="Manish"
         android:textColor="@color/purple_700"
-        android:textSize="16dp"/>
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/chat_user_msg_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chat_user_name_txt"
+        android:layout_below="@+id/group_list_user_name_txt"
         android:layout_marginStart="20dp"
-        android:layout_toRightOf="@+id/chat_user_img"
+        android:layout_toRightOf="@+id/group_list_user_img"
+        android:text="message"
         android:textSize="13dp" />
     <TextView
-        android:id="@+id/chat_user_time_txt"
+        android:id="@+id/group_list_time_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:text="11:34 pm"
         android:textSize="13dp"/>
-
 </RelativeLayout>

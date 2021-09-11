@@ -4,16 +4,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.chatapp.R
 import com.example.chatapp.adapter.AddContactGroupAdapter
-import com.example.chatapp.adapter.ContactListAdapter
 import com.example.chatapp.helper.gone
-import com.example.chatapp.helper.loadingDialog
 import com.example.chatapp.helper.visible
 import com.example.chatapp.model.pojo.sync_contacts.User
 import com.example.chatapp.model.repo.Outcome
@@ -21,10 +18,9 @@ import com.example.chatapp.viewmodel.AddGroupMembersViewModel
 import com.example.chatapp.viewmodel.SyncContactsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_add_contact_list.*
-import kotlinx.android.synthetic.main.fragment_contacts_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AddContactList : BottomSheetDialogFragment() {
+class AddContactListFragment : BottomSheetDialogFragment() {
     private val syncContactsViewModel: SyncContactsViewModel by viewModel()
     private val addGroupMembersViewModel: AddGroupMembersViewModel by viewModel()
     lateinit var accessToken: String
@@ -98,12 +94,15 @@ class AddContactList : BottomSheetDialogFragment() {
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){
                         val user = outcome.data.group
-                        Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity,"Added successfully!!!", Toast.LENGTH_SHORT).show()
                         val editor = sharedPreference.edit()
                         val set: MutableSet<String> = HashSet()
                         set.addAll(emptyList())
                         editor.putStringSet("newCntList", set)
                         editor.apply()
+
+                        dismiss()
+
                     }else{
                         Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
                     }
@@ -123,7 +122,7 @@ class AddContactList : BottomSheetDialogFragment() {
     companion object {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            AddContactList().apply {
+            AddContactListFragment().apply {
                 arguments = Bundle().apply {}
             }
     }

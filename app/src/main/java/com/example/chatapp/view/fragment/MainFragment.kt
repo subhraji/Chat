@@ -43,6 +43,8 @@ class MainFragment() : Fragment() {
 
         tabLayout.addTab(tabLayout.newTab().setText("Chat"))
         tabLayout.addTab(tabLayout.newTab().setText("Group"))
+        tabLayout.addTab(tabLayout.newTab().setText("Status"))
+
 
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         val adapter = ViewPagerAdapter(requireActivity(), childFragmentManager,

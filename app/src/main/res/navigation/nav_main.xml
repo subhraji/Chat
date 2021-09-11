@@ -57,7 +57,12 @@
     </fragment>
     <fragment
         android:id="@+id/addContactList"
-        android:name="com.example.chatapp.view.fragment.AddContactList"
+        android:name="com.example.chatapp.view.fragment.AddContactListFragment"
         android:label="fragment_add_contact_list"
         tools:layout="@layout/fragment_add_contact_list" />
+    <fragment
+        android:id="@+id/statusViewFragment"
+        android:name="com.example.chatapp.view.fragment.StatusViewFragment"
+        android:label="fragment_status_view"
+        tools:layout="@layout/fragment_status_view" />
 </navigation>

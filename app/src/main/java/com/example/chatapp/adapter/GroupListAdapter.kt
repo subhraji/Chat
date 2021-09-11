@@ -10,6 +10,7 @@ import com.example.chatapp.R
 import com.example.chatapp.helper.inflate
 import com.example.chatapp.model.pojo.create_group.Group
 import com.thekhaeng.pushdownanim.PushDownAnim
+import kotlinx.android.synthetic.main.group_list_item.view.*
 import kotlinx.android.synthetic.main.item_chat_user.view.*
 
 class GroupListAdapter(private val groupList: MutableList<Group>,
@@ -21,7 +22,7 @@ class GroupListAdapter(private val groupList: MutableList<Group>,
     inner class GroupListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupListViewHolder {
-        return GroupListViewHolder(parent.inflate(R.layout.item_chat_user))
+        return GroupListViewHolder(parent.inflate(R.layout.group_list_item))
     }
     override fun getItemCount(): Int {
         return groupList.size
@@ -42,10 +43,10 @@ class GroupListAdapter(private val groupList: MutableList<Group>,
         val group = groupList[position]
         holder.itemView.apply {
 
-            chat_user_name_txt.text = group.groupName
+            group_list_user_name_txt.text = group.groupName
 
-            holder.itemView.chatUserListItemRootLay.tag = group
-            PushDownAnim.setPushDownAnimTo(holder.itemView.chatUserListItemRootLay).setOnClickListener {
+            holder.itemView.groupListItemRootLay.tag = group
+            PushDownAnim.setPushDownAnimTo(holder.itemView.groupListItemRootLay).setOnClickListener {
                 itemClickListener.onItemClicked(it, holder.layoutPosition)
             }
         }

@@ -18,6 +18,15 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ChatApp"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_margin="7dp"/>
+
             <ImageView
                 android:id="@+id/main_options_btn"
                 android:layout_width="wrap_content"

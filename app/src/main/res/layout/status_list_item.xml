@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/status_list_item_root_lay"
+    android:background="?android:attr/selectableItemBackground">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/add_item_img"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/ic_baseline_person_24"
+            app:civ_border_color="#00BCD4"
+            app:civ_border_width="2dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toRightOf="@+id/add_item_img"
+            android:layout_margin="10dp"
+            >
+            <TextView
+                android:id="@+id/status_list_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Jonti"
+                android:textStyle="bold"
+                android:textColor="#565656"
+                android:textSize="16dp"/>
+            <TextView
+                android:id="@+id/status_list_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="15 minutes ago"
+                android:textSize="14dp"/>
+        </LinearLayout>
+</RelativeLayout>

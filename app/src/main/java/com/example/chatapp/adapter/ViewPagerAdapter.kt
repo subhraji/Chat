@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.example.chatapp.view.fragment.ChatListFragment
 import com.example.chatapp.view.fragment.GroupListFragment
-import java.util.*
+import com.example.chatapp.view.fragment.StatusListFragment
 
 class ViewPagerAdapter(var context: Context,
                        fm: FragmentManager,
@@ -19,6 +19,9 @@ class ViewPagerAdapter(var context: Context,
             }
             1 -> {
                 GroupListFragment()
+            }
+            2 -> {
+                StatusListFragment()
             }
 
             else -> getItem(position)
