@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,14 +18,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.chatapp.R
-import com.example.chatapp.helper.getTimeOnly
 import com.example.chatapp.helper.gone
 import com.example.chatapp.helper.loadImg
 import com.example.chatapp.helper.visible
 import com.example.chatapp.model.pojo.group_chat.GroupMessage
 import com.example.chatapp.view.activity.PDFViewActivity
 import com.example.chatapp.view.fragment.FriendsChatImagePreviewFragment
-import com.thekhaeng.pushdownanim.PushDownAnim
 import org.jetbrains.anko.startActivity
 import java.util.*
 

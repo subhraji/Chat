@@ -13,14 +13,13 @@ import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
 import com.example.chatapp.adapter.GroupListAdapter
 import com.example.chatapp.helper.*
-import com.example.chatapp.model.pojo.chat_user.ChatUser
 import com.example.chatapp.model.pojo.create_group.Group
-import com.example.chatapp.model.pojo.group_chat.GroupMessage
 import com.example.chatapp.model.repo.Outcome
 import com.example.chatapp.viewmodel.CreateGroupViewModel
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.fragment_group_chat.*
 import kotlinx.android.synthetic.main.fragment_group_list.*

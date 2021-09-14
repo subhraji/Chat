@@ -1,6 +1,7 @@
 package com.example.chatapp.view.fragment
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
@@ -9,19 +10,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.adapter.GroupMessageListAdapter
 import com.example.chatapp.helper.SocketHelper
 import com.example.chatapp.helper.hideSoftKeyboard
 import com.example.chatapp.model.pojo.group_chat.GroupMessage
+import com.example.chatapp.viewmodel.FriendChatViewModel
+import com.example.chatapp.viewmodel.GroupChatViewModel
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Ack
 import com.github.nkzawa.socketio.client.Socket
 import com.google.gson.Gson
 import com.thekhaeng.pushdownanim.PushDownAnim
+import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_group_chat.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GroupChatFragment : Fragment() {
 
@@ -29,7 +39,12 @@ class GroupChatFragment : Fragment() {
     private lateinit var groupName: String
     private lateinit var mGroupMessageListAdapter: GroupMessageListAdapter
     private var mSocket: Socket? = null
-    lateinit var userId: String
+    private lateinit var accessToken: String
+    private lateinit var phoneNo: String
+    private lateinit var userId: String
+    private val groupChatViewModel: GroupChatViewModel by viewModel()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,12 +87,29 @@ class GroupChatFragment : Fragment() {
 
         initSocket()
 
+
+        val sharedPreference = requireActivity().getSharedPreferences("TOKEN_PREF",
+            Context.MODE_PRIVATE)
+        accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
+        userId = sharedPreference.getString("userId","userId").toString()
+        phoneNo = sharedPreference.getString("phoneno","phoneno").toString()
+
         PushDownAnim.setPushDownAnimTo(cameraBtn_gr).setOnClickListener {
             selectImage()
         }
 
         PushDownAnim.setPushDownAnimTo(chat_btnSend_gr).setOnClickListener {
             sendMessage()
+        }
+
+        mSocket?.emit("join-group", groupId, Ack {
+            Log.d("join: ","join")
+        })
+
+        CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.Main) {
+                getGroupMessage()
+            }
         }
 
     }
@@ -88,7 +120,7 @@ class GroupChatFragment : Fragment() {
         }
         //listeners
         mSocket?.let { socket ->
-            socket.on("group_msg", chatMessageListener)
+            socket.on(groupId, chatMessageListener)
         }
 
         mSocket?.connect()
@@ -97,11 +129,35 @@ class GroupChatFragment : Fragment() {
 
     private val chatMessageListener = Emitter.Listener {
         requireActivity().runOnUiThread {
+
             val data = it[0] as JSONObject
             Log.i("groupChatData","groupChatData => ${data}")
+            val messageData = data.getJSONObject("data")
+            val message = Gson().fromJson(messageData.toString(), GroupMessage::class.java)
             try {
-                val messageData = data.getJSONObject("data")
-                val message = Gson().fromJson(messageData.toString(), GroupMessage::class.java)
+
+                Log.i("checkGroup"," reached")
+                Log.i("checkGroup",message.message)
+
+                if(message != null){
+
+                    Log.i("checkGroup"," reached too")
+                    val groupMessage = GroupMessage(
+                        message.message,
+                        message.messageUuid,
+                        message.sentById,
+                        message.sentByPhone,
+                        message.media,
+                        message.groupId
+                    )
+                    groupMessage.isSender = false
+                    groupMessage.messageType = message.messageType
+
+                    mGroupMessageListAdapter.addMessage(groupMessage)
+                    saveMessage(groupMessage)
+
+                }
+
 
             } catch (e: JSONException) {
                 Log.d("Socket_connected","exception -> ${e.message}")
@@ -122,8 +178,10 @@ class GroupChatFragment : Fragment() {
 
 
         val groupMessage = GroupMessage(
-            msgUuid,
             messageText,
+            msgUuid,
+            userId,
+            phoneNo,
             "",
             groupId
         )
@@ -132,7 +190,7 @@ class GroupChatFragment : Fragment() {
         groupMessage.isSent = true
 
         mGroupMessageListAdapter.addMessage(groupMessage)
-
+        saveMessage(groupMessage)
 
         Log.d("emitting send message","emitting send message")
         emitMessage(
@@ -192,5 +250,33 @@ class GroupChatFragment : Fragment() {
         builder.show()
     }
 
+
+    private fun saveMessage(groupMessage: GroupMessage) {
+        Log.i("saveMessage","reached here...")
+        chat_recycler_gr.scrollToPosition(mGroupMessageListAdapter.itemCount - 1)
+        groupChatViewModel.saveGroupMessage(groupMessage)
+    }
+
+    private fun getGroupMessage(){
+        groupChatViewModel.getGroupMessages(groupId).observe(requireActivity(), { messages ->
+            Log.d("msgSize","msg list size = ${messages.size}")
+            if (!messages.isNullOrEmpty()) {
+
+                mGroupMessageListAdapter.addAllMessages(messages)
+
+            } else {
+                Log.d("msgSize","msg list size => ${messages.size}")
+            }
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("socketOff","Done")
+        mSocket?.let { socket ->
+            socket.off(groupId, chatMessageListener)
+        }
+        mSocket?.disconnect()
+    }
 
 }

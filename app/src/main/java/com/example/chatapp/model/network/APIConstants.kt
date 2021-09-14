@@ -1,8 +1,8 @@
 package com.example.chatapp.model.network
 
 object APIConstants {
-    var BASE_URL = "https://767f-103-219-61-2.ngrok.io"
-    const val QUIZ_NODE_URL = "https://767f-103-219-61-2.ngrok.io"
+    var BASE_URL = "https://8f67-103-219-61-2.ngrok.io"
+    const val QUIZ_NODE_URL = "https://8f67-103-219-61-2.ngrok.io"
 
     const val FILE_PROVIDER = "com.example.chatapp.fileprovider"
 }

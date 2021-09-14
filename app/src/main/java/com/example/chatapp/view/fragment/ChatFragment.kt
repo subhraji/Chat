@@ -151,12 +151,13 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
     private val chatMessageListener = Emitter.Listener {
         requireActivity().runOnUiThread {
             val data = it[0] as JSONObject
+            Log.i("data","data => ${data}")
             try {
                 val messageData = data.getJSONObject("data")
                 val message = Gson().fromJson(messageData.toString(), Message::class.java)
                 if (message.sentBy.id == userId) {
 
-                    Log.i("data","data => ${message}")
+                    Log.i("data","msg data => ${message}")
                     Log.i("fileName","msg type 1 => ${message.fileName}")
                     val msgContent = if (message.messageType == "pdf") {
                         "file"
@@ -176,8 +177,6 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                     messagesList.fileName = message.fileName
                     mMessageAdapter.addMessage(message)
 
-
-                    Log.i("fileName","fileName => ${messagesList.fileName}")
                     saveMessage(messagesList)
                     sendAckMessage(message.msgUuid, userId, true)
 

@@ -32,6 +32,8 @@ val appModule = module {
 
     viewModel { FriendChatViewModel(get()) }
 
+    viewModel { GroupChatViewModel(get()) }
+
     viewModel { ChatUserViewModel(get()) }
 
     single<ChatImageUploadRepository> { ChatImageUploadRepositoryImpl(get()) }
