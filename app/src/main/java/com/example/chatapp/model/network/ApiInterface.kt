@@ -6,6 +6,7 @@ import com.example.chatapp.model.pojo.create_group.CreateGroupRequest
 import com.example.chatapp.model.pojo.create_group.CreateGroupResponse
 import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
 import com.example.chatapp.model.pojo.get_profile.GetProfile
+import com.example.chatapp.model.pojo.group_member.GroupMember
 import com.example.chatapp.model.pojo.req_otp.ReqOtpParam
 import com.example.chatapp.model.pojo.req_otp.RequestOtp
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
@@ -52,4 +53,10 @@ interface ApiInterface {
     @POST("/api/add-users-to-group")
     suspend fun addGroupMember(@Body body: AddUserToGroupReq?,
                                @Header("Authorization") token: String): AddUserToGroupResponse?
+
+    @GET("/api/get-users-by-group")
+    suspend fun getGroupMembers(
+        @Header("Authorization") token: String,
+        @Query("groupId") groupId: String
+    ): GroupMember?
 }

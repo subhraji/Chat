@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -38,6 +39,7 @@ import com.thekhaeng.pushdownanim.PushDownAnim
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_group_chat.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -143,6 +145,26 @@ class GroupChatFragment : Fragment(), UploadImageListener {
             withContext(Dispatchers.Main) {
                 getGroupMessage()
             }
+        }
+
+
+        PushDownAnim.setPushDownAnimTo(group_option_btn).setOnClickListener {
+
+            val popupMenu: PopupMenu = PopupMenu(requireContext(),group_option_btn)
+            popupMenu.menuInflater.inflate(R.menu.group_chat_option_menu,popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener {
+
+                when(it.itemId){
+                    R.id.group_info -> {
+                        val bundle = Bundle()
+                        bundle.putString("groupId", groupId)
+                        findNavController().navigate(R.id.groupInfoFragment, bundle)
+                        return@setOnMenuItemClickListener true
+                    }
+                }
+                return@setOnMenuItemClickListener true
+            }
+            popupMenu.show()
         }
 
     }

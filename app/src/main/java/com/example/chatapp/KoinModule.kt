@@ -6,6 +6,8 @@ import com.example.chatapp.model.repo.create_group.CreateGroupRepository
 import com.example.chatapp.model.repo.create_group.CreateGroupRepositoryImpl
 import com.example.chatapp.model.repo.get_profile.GetProfileRepository
 import com.example.chatapp.model.repo.get_profile.GetProfileRepositoryImpl
+import com.example.chatapp.model.repo.group_members.GetGroupMembersRepository
+import com.example.chatapp.model.repo.group_members.GetGroupMembersRepositoryImpl
 import com.example.chatapp.model.repo.login.LoginRepository
 import org.koin.androidx.compose.get
 import org.koin.dsl.module
@@ -51,4 +53,6 @@ val appModule = module {
     single<AddGroupMemberRepository> { AddGroupMemberRepositoryImpl(get()) }
     viewModel { AddGroupMembersViewModel(get()) }
 
+    single<GetGroupMembersRepository> { GetGroupMembersRepositoryImpl(get()) }
+    viewModel { GetGroupMembersViewModel(get()) }
 }
