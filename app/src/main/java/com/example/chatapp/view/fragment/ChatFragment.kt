@@ -544,7 +544,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                         Log.d("emitting send message","emitting send message")
                         emitMessage(
                             msgUuid,
-                            captionMessage,
+                            messageContent,
                             currentThreadTimeMillis,
                             imageUrl,
                             userId,
