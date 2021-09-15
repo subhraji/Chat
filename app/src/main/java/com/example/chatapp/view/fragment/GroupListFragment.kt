@@ -183,7 +183,7 @@ class GroupListFragment() : Fragment(), GroupListAdapter.GroupItemClickClickList
 
     override fun onItemClicked(view: View, position: Int) {
         val groups = view.tag as Group
-        val bundle = bundleOf("groupName" to groups.groupName, "groupId" to groups.id)
+        val bundle = bundleOf("groupName" to groups.groupName, "groupId" to groups.id, "isAdmin" to groups.userGroup.isAdmin)
         findNavController().navigate(R.id.groupChatFragment, bundle)
     }
 }

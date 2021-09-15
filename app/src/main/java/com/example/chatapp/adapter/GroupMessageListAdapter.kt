@@ -18,6 +18,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.chatapp.R
+import com.example.chatapp.helper.getTimeOnly
 import com.example.chatapp.helper.gone
 import com.example.chatapp.helper.loadImg
 import com.example.chatapp.helper.visible
@@ -190,8 +191,8 @@ class GroupMessageListAdapter(private val messageList: MutableList<GroupMessage>
 
 
             // Format the stored timestamp into a readable String using method.
-            /*val date = Date(message.sentOn)
-            timeText.text = date.getTimeOnly()*/
+            val date = Date(message.sentOn)
+            timeText.text = date.getTimeOnly()
 
             /*if(message.isSeen == true){
                 sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN)
@@ -246,10 +247,10 @@ class GroupMessageListAdapter(private val messageList: MutableList<GroupMessage>
             messageText.text = message.message
 
 
-            /*val date = Date(message.sentOn)
+            val date = Date(message.sentOn)
             // Format the stored timestamp into a readable String using method.
             timeText.text = date.getTimeOnly()
-            dateText.text = "date"*/
+            dateText.text = "date"
 
             //nameText.text = message.username;
             // Insert the profile image from the URL into the ImageView.

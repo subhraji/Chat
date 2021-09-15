@@ -19,6 +19,8 @@ data class GroupMessage(
     val media: String?,
     @SerializedName("groupId")
     val groupId: String,
+    @SerializedName("sentOn")
+    val sentOn: Long,
 ){
     var isSender = false
     var messageType = "text"

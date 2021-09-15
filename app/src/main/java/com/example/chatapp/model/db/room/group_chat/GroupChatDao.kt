@@ -8,7 +8,7 @@ import com.example.chatapp.model.pojo.group_chat.GroupMessage
 @Dao
 interface GroupChatDao: BaseDao<GroupMessage> {
 
-    @Query("Select * from groupmessage where groupId = :groupId")
+    @Query("Select * from groupmessage where groupId = :groupId order by sentOn")
     suspend fun getGroupMessages(groupId: String): List<GroupMessage>
 
 }

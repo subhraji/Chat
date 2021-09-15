@@ -55,6 +55,8 @@ class GroupChatFragment : Fragment(), UploadImageListener {
 
     private lateinit var groupId: String
     private lateinit var groupName: String
+    private var isAdmin: Boolean = false
+
     private lateinit var mGroupMessageListAdapter: GroupMessageListAdapter
     private var mSocket: Socket? = null
     private lateinit var accessToken: String
@@ -76,8 +78,8 @@ class GroupChatFragment : Fragment(), UploadImageListener {
 
             groupId = it.getString("groupId").toString()
             groupName = it.getString("groupName").toString()
-
-            Log.i("groupId",groupId)
+            isAdmin = it.getBoolean("isAdmin")
+            Log.i("isAdmin",isAdmin.toString())
         }
     }
 
@@ -90,6 +92,13 @@ class GroupChatFragment : Fragment(), UploadImageListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        if(!isAdmin){
+            add_member_btn.gone()
+        }else{
+            add_member_btn.visible()
+        }
+
         group_name_gr.text = groupName
 
         mGroupMessageListAdapter = GroupMessageListAdapter(mutableListOf(), requireActivity().supportFragmentManager)
@@ -169,14 +178,15 @@ class GroupChatFragment : Fragment(), UploadImageListener {
                     } else {
                         message.message
                     }
-                    Log.i("checkGroup"," reached too: ${message.messageType}")
+                    Log.i("checkGroup"," reached too: ${message.sentOn}")
                     val groupMessage = GroupMessage(
                         message.message,
                         message.messageUuid,
                         message.sentById,
                         message.sentByPhone,
                         message.media,
-                        message.groupId
+                        message.groupId,
+                        message.sentOn,
                     )
                     groupMessage.isSender = false
                     groupMessage.messageType = message.messageType
@@ -205,6 +215,7 @@ class GroupChatFragment : Fragment(), UploadImageListener {
         val currentThreadTimeMillis = System.currentTimeMillis()
         val msgUuid = currentThreadTimeMillis.toString()
 
+        Log.i("sentOn", currentThreadTimeMillis.toString())
 
         val groupMessage = GroupMessage(
             messageText,
@@ -212,7 +223,8 @@ class GroupChatFragment : Fragment(), UploadImageListener {
             userId,
             phoneNo,
             "",
-            groupId
+            groupId,
+            currentThreadTimeMillis
         )
         groupMessage.isSender = true
         groupMessage.messageType = "text"
@@ -226,7 +238,9 @@ class GroupChatFragment : Fragment(), UploadImageListener {
             msgUuid,
             messageText,
             null,
-            "text"
+            "text",
+            null,
+            currentThreadTimeMillis
         )
         textInput_gr.setText("")
         requireActivity().hideSoftKeyboard()
@@ -237,16 +251,19 @@ class GroupChatFragment : Fragment(), UploadImageListener {
         messageText: String,
         image: String? = null,
         messageType: String = "text",
-        fileName: String? = null
-    ) {
+        fileName: String? = null,
+        currentThreadTimeMillis: Long,
+        ) {
         val jsonMessage = JSONObject()
         jsonMessage.put("messageUuid", msgUuid)
         jsonMessage.put("message", messageText)
         jsonMessage.put("messageType", messageType)
         if (image != null)
             jsonMessage.put("media", image)
+            jsonMessage.put("fileName", fileName)
         jsonMessage.put("fileName", fileName)
         jsonMessage.put("groupId", groupId)
+        jsonMessage.put("sentOn", currentThreadTimeMillis)
 
         Log.d("Emit","emit started")
         mSocket?.emit("group message", jsonMessage.toString(), Ack {
@@ -399,7 +416,8 @@ class GroupChatFragment : Fragment(), UploadImageListener {
                             userId,
                             phoneNo,
                             imageUrl,
-                            groupId
+                            groupId,
+                            currentThreadTimeMillis
                         )
                         groupMessage.isSender = true
                         groupMessage.messageType = messageType
@@ -413,7 +431,9 @@ class GroupChatFragment : Fragment(), UploadImageListener {
                             msgUuid,
                             messageContent,
                             imageUrl,
-                            messageType
+                            messageType,
+                            outcome.data.files[0].filename,
+                            currentThreadTimeMillis
                         )
 
                     }else{
