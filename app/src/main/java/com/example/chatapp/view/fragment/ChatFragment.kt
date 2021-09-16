@@ -59,6 +59,9 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
     lateinit var accessToken: String
     lateinit var userId: String
     lateinit var friendsPhoneno: String
+    lateinit var friendsAvatar: String
+
+
     private val chatViewModel: FriendChatViewModel by viewModel()
     private val chatUserViewModel: ChatUserViewModel by viewModel()
     private val uploadChatImageViewModel: UploadChatImageViewModel by viewModel()
@@ -82,7 +85,10 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
         arguments?.let {
             userId = it.getString(USER_ID).toString()
             friendsPhoneno = it.getString("phoneno").toString()
+            friendsAvatar = it.getString("avatar").toString()
         }
+
+        Log.i("friendsAvatar",friendsAvatar)
     }
 
     override fun onCreateView(
@@ -169,7 +175,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                         message.msgUuid,
                         msgContent,
                         message.image,
-                        com.example.chatapp.model.pojo.friend_chat.User(message.sentBy.id,message.sentBy.phoneno),
+                        com.example.chatapp.model.pojo.friend_chat.User(message.sentBy.id,message.sentBy.phoneno,message.sentBy.avatar),
                         message.sentOn,
                     )
                     messagesList.isSender = false
@@ -190,7 +196,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                                 message.sentBy.id,
                                 message.sentBy.phoneno,
                                 msgContent,
-                                "",
+                                message.sentBy.avatar,
                                 message.sentOn
                             )
 
@@ -259,7 +265,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             msgUuid,
             messageText,
             "",
-            com.example.chatapp.model.pojo.friend_chat.User(userId,friendsPhoneno),
+            com.example.chatapp.model.pojo.friend_chat.User(userId,friendsPhoneno,friendsAvatar),
             currentThreadTimeMillis,
         )
         message.isSender = true
@@ -274,7 +280,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
             userId,
             friendsPhoneno,
             messageText,
-            "",
+            friendsAvatar,
             currentThreadTimeMillis
         )
         if(chatUserSize == 1){
@@ -518,7 +524,7 @@ class ChatFragment : Fragment(), MessageListAdapter.ChatDeleteClickListener, Upl
                             msgUuid,
                             messageContent,
                             imageUrl,
-                            User(userId, friendsPhoneno),
+                            User(userId, friendsPhoneno,friendsAvatar),
                             currentThreadTimeMillis
                         )
                         message.isSender = true

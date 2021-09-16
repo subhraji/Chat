@@ -95,12 +95,6 @@ class GroupChatFragment : Fragment(), UploadImageListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        if(!isAdmin){
-            add_member_btn.gone()
-        }else{
-            add_member_btn.visible()
-        }
-
         group_name_gr.text = groupName
 
         mGroupMessageListAdapter = GroupMessageListAdapter(mutableListOf(), requireActivity().supportFragmentManager)
@@ -112,13 +106,6 @@ class GroupChatFragment : Fragment(), UploadImageListener {
             findNavController().navigateUp()
         }
 
-        PushDownAnim.setPushDownAnimTo(add_member_btn).setOnClickListener {
-            val bottomSheet = AddContactListFragment()
-            val bundle = Bundle()
-            bundle.putString("groupId", groupId)
-            bottomSheet.arguments = bundle
-            bottomSheet.show(requireActivity().supportFragmentManager, "AddContactList")
-        }
 
         initSocket()
 
@@ -158,6 +145,7 @@ class GroupChatFragment : Fragment(), UploadImageListener {
                     R.id.group_info -> {
                         val bundle = Bundle()
                         bundle.putString("groupId", groupId)
+                        bundle.putBoolean("isAdmin", isAdmin)
                         findNavController().navigate(R.id.groupInfoFragment, bundle)
                         return@setOnMenuItemClickListener true
                     }
