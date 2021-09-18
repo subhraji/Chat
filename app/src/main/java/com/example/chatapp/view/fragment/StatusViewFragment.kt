@@ -18,10 +18,19 @@ import com.example.chatapp.helper.gone
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.fragment_status_view.*
 import kotlinx.android.synthetic.main.status_list_item.view.*
+import android.os.CountDownTimer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 
 class StatusViewFragment : Fragment() {
     private var imageUrl: String? = null
     private var userName: String? = null
+
+    var mCountDownTimer: CountDownTimer? = null
+    var i = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +50,23 @@ class StatusViewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        status_view_progress_bar.setProgress(i)
+        mCountDownTimer = object : CountDownTimer(5000, 50) {
+            override fun onTick(millisUntilFinished: Long) {
+                Log.v("Log_tag", "Tick of Progress ${i as Int * 100 / (5000 / 50)}")
+                i++
+                status_view_progress_bar.setProgress(i as Int * 100 / (5000 / 50))
+            }
+
+            override fun onFinish() {
+                //Do what you want
+                i++
+                //status_view_progress_bar.setProgress(100)
+                findNavController().navigateUp()
+            }
+        }
+        (mCountDownTimer as CountDownTimer).start()
 
         Glide.with(requireActivity())
             .load(imageUrl)

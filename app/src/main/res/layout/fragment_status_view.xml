@@ -5,11 +5,20 @@
     android:layout_height="match_parent"
     android:background="#000000"
     tools:context=".view.fragment.StatusViewFragment">
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/status_view_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:progress="9"/>
     <LinearLayout
         android:id="@+id/status_username_lay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/status_view_progress_bar"
         android:orientation="horizontal">
 
         <ImageView
@@ -19,14 +28,15 @@
             android:layout_margin="18dp"
             android:background="@drawable/ic_arrow_back"
             android:backgroundTint="@color/white" />
+
         <TextView
             android:id="@+id/status_view_username_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
+            android:layout_margin="18dp"
             android:textColor="@color/white"
-            android:textStyle="bold"
-            android:layout_margin="18dp"/>
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
