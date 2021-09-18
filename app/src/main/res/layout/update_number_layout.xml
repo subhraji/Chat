@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="30dp"
+    android:orientation="vertical">
+<EditText
+    android:id="@+id/update_num_edtxt_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Enter new number" />
+    <Button
+        android:id="@+id/get_otp_num_dialog_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="get otp"
+        android:backgroundTint="@color/purple_700"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:layout_gravity="center"/>
+</LinearLayout>

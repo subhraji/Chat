@@ -22,12 +22,20 @@ import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.helper.getTimeOnly
 import com.example.chatapp.helper.gone
+import com.example.chatapp.helper.loadImg
 import com.example.chatapp.helper.visible
+import com.example.chatapp.view.activity.PDFViewActivity
 import com.example.chatapp.view.fragment.FriendsChatImagePreviewFragment
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.item_chat_user.view.*
+import org.jetbrains.anko.startActivity
 import java.util.*
 import javax.sql.DataSource
+import androidx.core.content.ContextCompat.startActivity
+
+import android.content.Intent
+import android.net.Uri
+
 
 class MessageListAdapter(private val messageList: MutableList<Message>,
                          private val fragmentManager: FragmentManager,
@@ -191,26 +199,37 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                             dialogFragment.show(fragmentManager, "signature")
                         }
                     }
+                } else if(message.messageType == "pdf"){
+                    messageImg.loadImg(R.drawable.greyblack_pdf, context)
+                    messageImg.setOnClickListener {
+                        if (message.messageType == "pdf") {
+                            context.startActivity<PDFViewActivity>(
+                                "pdfUrl" to message.image,
+                                "pdfName" to message.fileName
+                            )
+                        }
+                    }
                 } else {
                     messageImg.gone()
                     image_progress_me.gone()
+                }
             }
 
-                // Format the stored timestamp into a readable String using method.
-                val date = Date(message.sentOn)
-                timeText.text = date.getTimeOnly()
 
-                if(message.isSeen == true){
-                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN)
-                    sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.done_all_grey))
-                }else if(message.isSent == true){
+            // Format the stored timestamp into a readable String using method.
+            val date = Date(message.sentOn)
+            timeText.text = date.getTimeOnly()
 
-                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
+            if(message.isSeen == true){
+                sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSeenClr), android.graphics.PorterDuff.Mode.SRC_IN)
+                sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.done_all_grey))
+            }else if(message.isSent == true){
 
-                }else{
-                    sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
-                    sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_access_time_24))
-                }
+                sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
+
+            }else{
+                sentMark.setColorFilter(ContextCompat.getColor(context, R.color.sentMarkSentClr), android.graphics.PorterDuff.Mode.SRC_IN)
+                sentMark.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_baseline_access_time_24))
             }
         }
     }
@@ -232,7 +251,8 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                  holder: RecyclerView.ViewHolder,
                  chatDeleteClickListener: ChatDeleteClickListener
         ) {
-            //messageImg.gone()
+            messageImg.gone()
+            image_progress_other.gone()
             chatOtherDeleteBtn.gone()
 
             chatOtherRootLay.setOnLongClickListener {
@@ -302,6 +322,17 @@ class MessageListAdapter(private val messageList: MutableList<Message>,
                             val dialogFragment = FriendsChatImagePreviewFragment(null)
                             dialogFragment.arguments = bundle
                             dialogFragment.show(fragmentManager, "signature")
+                        }
+                    }
+                }else if(message.messageType == "pdf"){
+                    messageImg.visible()
+                    messageImg.loadImg(R.drawable.greyblack_pdf, context)
+                    messageImg.setOnClickListener {
+                        if (message.messageType == "pdf") {
+                            context.startActivity<PDFViewActivity>(
+                                "pdfUrl" to message.image,
+                                "pdfName" to message.fileName
+                            )
                         }
                     }
                 } else {

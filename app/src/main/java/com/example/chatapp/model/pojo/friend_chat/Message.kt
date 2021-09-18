@@ -26,4 +26,5 @@ data class Message(
         var hasRead = false
         var isSent = false
         var isSeen = false
+        var fileName: String? = null
 }

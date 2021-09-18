@@ -13,14 +13,15 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/purple_700">
+
             <ImageView
                 android:id="@+id/chat_frg_back_arrow"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_arrow_back"
-                app:tint="@color/white"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="15dp"/>
+                android:layout_marginStart="15dp"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/white" />
             <TextView
                 android:id="@+id/chat_frg_phone_no_txt"
                 android:layout_width="wrap_content"
@@ -44,10 +45,10 @@
         android:layout_above="@+id/controlLayout"
         android:layout_marginStart="11dp"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="11dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_chat_me"/>
+        tools:listitem="@layout/item_chat_me" />
 
     <LinearLayout
         android:id="@+id/controlLayout"

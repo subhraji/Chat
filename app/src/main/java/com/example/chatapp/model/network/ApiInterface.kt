@@ -1,10 +1,18 @@
 package com.example.chatapp.model.network
 
+import com.example.chatapp.model.pojo.add_user_to_group.AddUserToGroupReq
+import com.example.chatapp.model.pojo.add_user_to_group.AddUserToGroupResponse
+import com.example.chatapp.model.pojo.create_group.CreateGroupRequest
+import com.example.chatapp.model.pojo.create_group.CreateGroupResponse
 import com.example.chatapp.model.pojo.friend_chat.UploadImageResponse
+import com.example.chatapp.model.pojo.get_profile.GetProfile
+import com.example.chatapp.model.pojo.group_member.GroupMember
 import com.example.chatapp.model.pojo.req_otp.ReqOtpParam
 import com.example.chatapp.model.pojo.req_otp.RequestOtp
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsResponse
+import com.example.chatapp.model.pojo.update_profile.UpdateProfileRequest
+import com.example.chatapp.model.pojo.update_profile.UpdateProfileResponse
 import com.example.chatapp.model.pojo.verify_otp.VerifyOtpReq
 import com.example.chatapp.model.pojo.verify_otp.VerifyOtpResponse
 import okhttp3.MultipartBody
@@ -30,4 +38,25 @@ interface ApiInterface {
                                 @Part("message_type") message_type: RequestBody,
                                 @Part image: MultipartBody.Part?,
                                 @Header("Authorization") token: String): UploadImageResponse?
+
+    @POST("/api/create-group")
+    suspend fun createGroup(@Body body: CreateGroupRequest?,
+                             @Header("Authorization") token: String): CreateGroupResponse?
+
+    @GET("/api/get-user-profile")
+    suspend fun getProfile(@Header("Authorization") token: String): GetProfile?
+
+    @POST("/api/update-profile")
+    suspend fun updateProfile(@Body body: UpdateProfileRequest?,
+                             @Header("Authorization") token: String): UpdateProfileResponse?
+
+    @POST("/api/add-users-to-group")
+    suspend fun addGroupMember(@Body body: AddUserToGroupReq?,
+                               @Header("Authorization") token: String): AddUserToGroupResponse?
+
+    @GET("/api/get-users-by-group")
+    suspend fun getGroupMembers(
+        @Header("Authorization") token: String,
+        @Query("groupId") groupId: String
+    ): GroupMember?
 }

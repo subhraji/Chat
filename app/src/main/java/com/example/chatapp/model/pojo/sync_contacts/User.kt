@@ -17,5 +17,7 @@ data class User(
     @SerializedName("updatedAt")
     val updatedAt: String,
     @SerializedName("username")
-    val username: Any
+    val username: Any,
+    @SerializedName("avatar")
+    val avatar: String,
 )

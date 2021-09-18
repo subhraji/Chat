@@ -44,6 +44,8 @@ class ChatListFragment : Fragment(), ChatUserAdapter.ChatUserItemClickClickListe
     private lateinit var mChatUserAdapter: ChatUserAdapter
     private var chatUserSize = 0
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {}
@@ -125,8 +127,8 @@ class ChatListFragment : Fragment(), ChatUserAdapter.ChatUserItemClickClickListe
                     val messages = com.eduaid.child.models.pojo.friend_chat.Message(
                         message.msgUuid,
                         message.msg,
-                        "",
-                        com.example.chatapp.model.pojo.friend_chat.User(message.sentBy.id,message.sentBy.phoneno),
+                        message.image,
+                        com.example.chatapp.model.pojo.friend_chat.User(message.sentBy.id,message.sentBy.phoneno,message.sentBy.avatar),
                         message.sentOn,
                     )
                     messages.isSender = false
@@ -136,7 +138,6 @@ class ChatListFragment : Fragment(), ChatUserAdapter.ChatUserItemClickClickListe
                     saveMessage(messages)
 
                     /*chat user save*/
-
 
                     CoroutineScope(Dispatchers.IO).launch {
                         chatUserSize = chatUserViewModel.isChatUserAvailable(message.sentBy.id)
@@ -148,7 +149,7 @@ class ChatListFragment : Fragment(), ChatUserAdapter.ChatUserItemClickClickListe
                                 message.sentBy.id,
                                 message.sentBy.phoneno,
                                 message.msg,
-                                "",
+                                message.sentBy.avatar,
                                 message.sentOn
                             )
 
@@ -157,12 +158,15 @@ class ChatListFragment : Fragment(), ChatUserAdapter.ChatUserItemClickClickListe
                                 Log.d("check","reached here")
                                 updateChatUser(chatUser)
                                 getChatUser()
+                                //mChatUserAdapter.addUser(chatUser)
 
 
                             }else{
                                 Log.d("check","reached here too => ${chatUserSize}")
                                 saveChatUser(chatUser)
                                 getChatUser()
+                                //mChatUserAdapter.addUser(chatUser)
+
                             }
 
 
@@ -191,8 +195,8 @@ class ChatListFragment : Fragment(), ChatUserAdapter.ChatUserItemClickClickListe
             if (!users.isNullOrEmpty()) {
                 Log.d("userSize","user list size too = ${users.size}")
 
-
-                chat_user_recycler.adapter = ChatUserAdapter(users,requireActivity(),this@ChatListFragment)
+                //mChatUserAdapter.addAllUsers(users)
+                chat_user_recycler.adapter = ChatUserAdapter(users.toMutableList(),requireActivity(),this@ChatListFragment)
                 //mChatUserAdapter.addAllChatUser(users)
 
             } else {
@@ -236,7 +240,7 @@ class ChatListFragment : Fragment(), ChatUserAdapter.ChatUserItemClickClickListe
         mSocket?.disconnect()
 
         val users = view.tag as ChatUser
-        val bundle = bundleOf("userId" to users.userId, "phoneno" to users.userName)
+        val bundle = bundleOf("userId" to users.userId, "phoneno" to users.userName, "avatar" to users.image)
         findNavController().navigate(R.id.action_mainFragment_to_chatFragment, bundle)
     }
 }

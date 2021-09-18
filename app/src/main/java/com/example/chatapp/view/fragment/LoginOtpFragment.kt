@@ -64,6 +64,7 @@ class LoginOtpFragment : Fragment() {
                             editor.putString("accessToken",accessToken)
                             editor.putString("refreshToken",refreshToken)
                             editor.putString("userId",userId)
+                            editor.putString("phoneno",phoneno)
                             editor.putBoolean("loginStatus",true)
                             editor.apply()
 

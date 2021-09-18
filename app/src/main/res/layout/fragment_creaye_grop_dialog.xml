@@ -6,7 +6,7 @@
     tools:context=".view.fragment.CreateGroupDialogFragment">
 
     <Button
-        android:id="@+id/create_group_btn"
+        android:id="@+id/add_group_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create"

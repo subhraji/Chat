@@ -2,23 +2,36 @@ package com.example.chatapp.view.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
-import com.example.chatapp.helper.NewGroupListener
-import com.example.chatapp.helper.gone
-import com.example.chatapp.helper.visible
+import com.example.chatapp.adapter.GroupListAdapter
+import com.example.chatapp.helper.*
+import com.example.chatapp.model.pojo.create_group.Group
+import com.example.chatapp.model.repo.Outcome
+import com.example.chatapp.viewmodel.CreateGroupViewModel
+import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.thekhaeng.pushdownanim.PushDownAnim
-import kotlinx.android.synthetic.main.fragment_chat.*
+import kotlinx.android.synthetic.main.fragment_group_chat.*
 import kotlinx.android.synthetic.main.fragment_group_list.*
+import org.json.JSONException
+import org.json.JSONObject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class GroupListFragment() : Fragment() {
+class GroupListFragment() : Fragment(), GroupListAdapter.GroupItemClickClickLister {
     private var mSocket: Socket? = null
     lateinit var accessToken: String
+    private val createGroupViewModel: CreateGroupViewModel by viewModel()
+    private lateinit var mGroupListAdapter: GroupListAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,50 +53,137 @@ class GroupListFragment() : Fragment() {
 
         create_group_card.gone()
 
+
         val sharedPreference = requireActivity().getSharedPreferences("TOKEN_PREF",
             Context.MODE_PRIVATE)
         accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
 
-        PushDownAnim.setPushDownAnimTo(create_group_btn).setOnClickListener {
+
+        mGroupListAdapter = GroupListAdapter(mutableListOf(),requireActivity(),this@GroupListFragment)
+        group_list_recycler.apply {
+            adapter = mGroupListAdapter
+        }
+
+        initSocket()
+
+        PushDownAnim.setPushDownAnimTo(add_group_btn).setOnClickListener {
             create_group_card.visible()
         }
 
-        PushDownAnim.setPushDownAnimTo(create_group_btnn).setOnClickListener {
+        PushDownAnim.setPushDownAnimTo(create_group_btn).setOnClickListener {
             create_group_card.gone()
+            createGroup(group_name_txt.text.toString(), "")
         }
+
+        getGroups()
 
     }
 
-    /*private fun initSocket() {
+    private fun initSocket() {
         while (mSocket == null) {
             mSocket = SocketHelper.loginSocket(requireContext())
         }
-        val currentThreadTimeMillis = System.currentTimeMillis()
-        val groupId = "group"+currentThreadTimeMillis.toString()
         //listeners
         mSocket?.let { socket ->
-            socket.on(groupId, groupChatMessageListener)
+            socket.on("added group", addGroupListener)
         }
-
         mSocket?.connect()
-        Log.d("Socket_connected", "Socket_connected => ${mSocket?.connected()}")
+        Log.d("Socket_connected_gr", "Socket_connected => ${mSocket?.connected()}")
     }
 
-    private val groupChatMessageListener = Emitter.Listener {
-        requireActivity().runOnUiThread {
-            Log.i("checkList","reached here")
 
+    private val addGroupListener = Emitter.Listener {
+        requireActivity().runOnUiThread {
             val data = it[0] as JSONObject
+            Log.d("group_data", "group_data1 => $data")
             try {
                 val messageData = data.getJSONObject("data")
-                val message = Gson().fromJson(messageData.toString(), Message::class.java)
+                val message = Gson().fromJson(messageData.toString(), Group::class.java)
+
+                if(message!=null){
+                    Log.d("group_data", "group_data_msg => $messageData")
+                    val group = Group(
+                        message.createdBy,
+                        message.groupImage,
+                        message.groupName,
+                        message.id,
+                        message.userGroup
+                    )
+                    saveGroup(group)
+                    mGroupListAdapter.addGroup(group)
+
+
+                }
 
             } catch (e: JSONException) {
-                Log.d("Socket_connected","exception -> ${e.message}")
+                Log.d("Socket_connected_gr","group exception -> ${e.message}")
                 e.printStackTrace()
             }
         }
-    }*/
+    }
 
 
+    private fun createGroup(group_name: String, group_image: String){
+        val loader = requireActivity().loadingDialog()
+        loader.show()
+        createGroupViewModel.createGroup(group_name, group_image, accessToken).observe(requireActivity(), { outcome ->
+            loader.dismiss()
+            group_name_txt.setText("")
+            requireActivity().hideSoftKeyboard()
+            when(outcome){
+                is Outcome.Success ->{
+                    if(outcome.data.status =="success"){
+                        val groupData = outcome.data.group
+                        Toast.makeText(activity,"success !!!", Toast.LENGTH_SHORT).show()
+                        val group = Group(
+                            groupData.createdBy,
+                            groupData.groupImage,
+                            groupData.groupName,
+                            groupData.id,
+                            groupData.userGroup
+                        )
+                        saveGroup(group)
+                        mGroupListAdapter.addGroup(group)
+                    }else{
+                        Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                is Outcome.Failure<*> -> {
+                    Toast.makeText(activity,outcome.e.message, Toast.LENGTH_SHORT).show()
+
+                    outcome.e.printStackTrace()
+                    Log.i("status",outcome.e.cause.toString())
+                }
+            }
+
+
+        })
+    }
+
+    private fun saveGroup(group: Group) {
+        createGroupViewModel.saveGroup(group)
+    }
+
+    private fun getGroups(){
+        createGroupViewModel.getGroups().observe(requireActivity(), { groups ->
+            Log.d("userSize","user list size = ${groups.size}")
+            if (!groups.isNullOrEmpty()) {
+                Log.d("userSize","user list size too = ${groups.size}")
+
+                //group_list_recycler.adapter = GroupListAdapter(groups.toMutableList(),requireActivity())
+                mGroupListAdapter.addAllGroups(groups)
+
+            } else {
+                Log.d("userSize","user list size => ${groups.size}")
+            }
+        })
+    }
+
+
+    override fun onItemClicked(view: View, position: Int) {
+        val groups = view.tag as Group
+        val bundle = bundleOf("groupName" to groups.groupName, "groupId" to groups.id, "isAdmin" to groups.userGroup.isAdmin)
+        findNavController().navigate(R.id.groupChatFragment, bundle)
+    }
 }

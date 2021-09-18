@@ -19,13 +19,14 @@
         android:layout_height="1dp"
         android:background="#C8C8C8"
         android:layout_below="@+id/contacts_view_txt"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/contactListRecycler"
         android:layout_width="match_parent"
-        tools:listitem="@layout/contact_list_item"
-        tools:itemCount="3"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/contact_list_view"/>
+        android:layout_below="@+id/contact_list_view"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="3"
+        tools:listitem="@layout/contact_list_item" />
 
 </RelativeLayout>

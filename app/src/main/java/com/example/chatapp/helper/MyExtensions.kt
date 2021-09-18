@@ -1,6 +1,7 @@
 package com.example.chatapp.helper
 import android.app.Activity
 import android.app.Dialog
+import android.app.ProgressDialog.show
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,10 +9,13 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
+import android.os.Environment
+import android.text.Editable
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
@@ -87,6 +91,12 @@ fun Activity.hideSoftKeyboard() {
     }
 }
 
+fun View.showKeyboard() {
+    this.requestFocus()
+    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+}
+
 
 fun View.visible() {
     this.visibility = View.VISIBLE
@@ -128,17 +138,21 @@ fun String.toMultipartFormString(): RequestBody {
 }
 
 fun Context.createMultiPart(keyName: String, photoPath: File): MultipartBody.Part {
-    //val file = File(photoPath)
-    //Log.i("xxx ",file.toString())
 
-    //val compressedImageFile = Compressor.compress(this, file)
     val requestFile = photoPath.asRequestBody("image/*".toMediaTypeOrNull())
     Log.i("xxx ",requestFile.toString())
-    // MultipartBody.Part is used to send also the actual file name
     return MultipartBody.Part.createFormData(keyName, photoPath.name, requestFile)
 
 }
 
+
+fun Context.createMultiPartFile(keyName: String, photoPath: String): MultipartBody.Part {
+    val file = File(photoPath)
+
+    // MultipartBody.Part is used to send also the actual file name
+    return MultipartBody.Part.createFormData(keyName, file.name, file.asRequestBody("image/*".toMediaTypeOrNull()))
+
+}
 
 fun ImageView.loadImg(path: Any, context: Context, placeholder: Drawable? = null) {
     Glide.with(context)
@@ -151,4 +165,32 @@ fun Date.getTimeOnly(pattern: String = "hh:mm aa"): String {
 
     val sdf = SimpleDateFormat(pattern, Locale.US)
     return sdf.format(this)
+}
+
+
+fun getGlideURL(url: String?, context: Context): GlideUrl {
+    return GlideUrl(URL(url), LazyHeaders.Builder()
+        .build())
+}
+
+fun ImageView.loadUrl(url: String?, context: Context, placeholder: Drawable? = null) {
+    try {
+        Glide.with(context)
+            .load(getGlideURL(url, context))
+            .placeholder(placeholder)
+            .into(this)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun getFilePath(folder: String = "images", fileName: String): File {
+
+    val file = File(
+        Environment
+            .getExternalStorageDirectory().toString()
+                + File.separator + "assets" + File.separator
+                + folder + File.separator + fileName
+    )
+    return file
 }
