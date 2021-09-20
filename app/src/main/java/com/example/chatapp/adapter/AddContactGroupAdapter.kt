@@ -1,20 +1,20 @@
 package com.example.chatapp.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowId
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
+import com.example.chatapp.helper.gone
 import com.example.chatapp.helper.inflate
+import com.example.chatapp.helper.visible
 import com.example.chatapp.model.pojo.sync_contacts.User
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.add_contact_to_grp_item.view.*
 
-class AddContactGroupAdapter(private val contactList: List<User>,private val context: Context): RecyclerView.Adapter<AddContactGroupAdapter.AddContactGroupViewHolder>() {
+class AddContactGroupAdapter(private val contactList: List<User>, private val context: Context, private val myPhoneno:String): RecyclerView.Adapter<AddContactGroupAdapter.AddContactGroupViewHolder>() {
     val newList: MutableList<String> = ArrayList()
     private var addClick:Boolean = false
     lateinit var sharedPreference: SharedPreferences
@@ -34,6 +34,13 @@ class AddContactGroupAdapter(private val contactList: List<User>,private val con
         sharedPreference = context.getSharedPreferences("TOKEN_PREF", Context.MODE_PRIVATE)
 
         holder.itemView.apply {
+            if(!myPhoneno.equals(contacts.phoneno)){
+                add_btn_ag.visible()
+            }else{
+                add_btn_ag.gone()
+            }
+
+
             user_name_txt_ag.text = contacts.phoneno.toString()
 
             PushDownAnim.setPushDownAnimTo(add_btn_ag).setOnClickListener {

@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.example.chatapp.model.network.ApiClient
 import com.example.chatapp.model.pojo.add_user_to_group.AddUserToGroupReq
 import com.example.chatapp.model.pojo.add_user_to_group.AddUserToGroupResponse
-import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
-import com.example.chatapp.model.pojo.sync_contacts.SyncContactsResponse
 import com.example.chatapp.model.repo.Outcome
 
 class AddGroupMemberRepositoryImpl(private val context: Context):AddGroupMemberRepository {

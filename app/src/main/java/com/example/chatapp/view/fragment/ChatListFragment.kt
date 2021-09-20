@@ -12,11 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.eduaid.child.models.pojo.friend_chat.Message
 import com.example.chatapp.R
 import com.example.chatapp.adapter.ChatUserAdapter
-import com.example.chatapp.adapter.ContactListAdapter
-import com.example.chatapp.adapter.MessageListAdapter
 import com.example.chatapp.helper.SocketHelper
 import com.example.chatapp.model.pojo.chat_user.ChatUser
-import com.example.chatapp.model.pojo.sync_contacts.User
 import com.example.chatapp.viewmodel.ChatUserViewModel
 import com.example.chatapp.viewmodel.FriendChatViewModel
 import com.github.nkzawa.emitter.Emitter
