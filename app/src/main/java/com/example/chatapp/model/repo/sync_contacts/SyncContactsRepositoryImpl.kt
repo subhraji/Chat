@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.example.chatapp.model.network.ApiClient
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsReq
 import com.example.chatapp.model.pojo.sync_contacts.SyncContactsResponse
-import com.example.chatapp.model.pojo.verify_otp.VerifyOtpReq
-import com.example.chatapp.model.pojo.verify_otp.VerifyOtpResponse
 import com.example.chatapp.model.repo.Outcome
 
 class SyncContactsRepositoryImpl(private val context: Context):SyncContactsRepository {
@@ -14,12 +12,12 @@ class SyncContactsRepositoryImpl(private val context: Context):SyncContactsRepos
     private val apiService = ApiClient.getInstance(context)
 
     override suspend fun syncContacts(
-        phoneno: String,
+        phonenoList: List<String>,
         token: String
     ): Outcome<SyncContactsResponse> {
         val apiResponse = MutableLiveData<Outcome<SyncContactsResponse>>()
         try {
-            val response = apiService.syncContacts(SyncContactsReq(phoneno),token)
+            val response = apiService.syncContacts(SyncContactsReq(phonenoList),token)
             apiResponse.value = Outcome.success(response!!)
         } catch (e: Throwable) {
             apiResponse.value = Outcome.failure(e)

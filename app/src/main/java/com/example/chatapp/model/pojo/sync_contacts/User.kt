@@ -4,6 +4,8 @@ package com.example.chatapp.model.pojo.sync_contacts
 import com.google.gson.annotations.SerializedName
 
 data class User(
+    @SerializedName("avatar")
+    val avatar: String,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("id")
@@ -17,7 +19,5 @@ data class User(
     @SerializedName("updatedAt")
     val updatedAt: String,
     @SerializedName("username")
-    val username: Any,
-    @SerializedName("avatar")
-    val avatar: String,
+    val username: String
 )

@@ -24,6 +24,8 @@ class AddContactListFragment : BottomSheetDialogFragment() {
     private val syncContactsViewModel: SyncContactsViewModel by viewModel()
     private val addGroupMembersViewModel: AddGroupMembersViewModel by viewModel()
     lateinit var accessToken: String
+    lateinit var myPhoneno: String
+
     lateinit var sharedPreference:SharedPreferences
     private lateinit var groupId: String
 
@@ -49,24 +51,31 @@ class AddContactListFragment : BottomSheetDialogFragment() {
          sharedPreference = requireActivity().getSharedPreferences("TOKEN_PREF",
             Context.MODE_PRIVATE)
         accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
-        getContacts("+917002838640")
+        myPhoneno = sharedPreference.getString("phoneno",null).toString()
+
+        var contactList: ArrayList<String> = ArrayList()
+        contactList.add("+917002838640")
+        contactList.add("+918011299668")
+
+
+        getContacts(contactList)
 
         add_contacts_to_grp_btn.setOnClickListener {
             addGroupMember()
         }
     }
 
-    private fun getContacts(phoneno: String){
+    private fun getContacts(phonenoList: List<String>){
         progressBar_ag.visible()
-        syncContactsViewModel.syncContacts(phoneno.takeLast(10),accessToken).observe(viewLifecycleOwner, androidx.lifecycle.Observer { outcome->
+        syncContactsViewModel.syncContacts(phonenoList,accessToken).observe(viewLifecycleOwner, androidx.lifecycle.Observer { outcome->
             progressBar_ag.gone()
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){
-                        val user = outcome.data.user
-                        val userList = listOf<User>(user)
-                        add_contact_to_group_recycler.adapter = AddContactGroupAdapter(userList,requireActivity())
-                        Log.i("clUser",user.toString())
+                        val userList = outcome.data.userList
+                        //val userList = listOf<User>(user)
+                        add_contact_to_group_recycler.adapter = AddContactGroupAdapter(userList,requireActivity(),myPhoneno)
+                        Log.i("clUser",userList.toString())
                     }else{
                         Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
                     }

@@ -12,7 +12,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
@@ -30,6 +29,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ContactsListFragment : Fragment() {
     private val syncContactsViewModel: SyncContactsViewModel by viewModel()
     lateinit var accessToken: String
+    lateinit var phoneno: String
+
     private val PERMISSIONS_REQUEST_READ_CONTACTS = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,9 +52,10 @@ class ContactsListFragment : Fragment() {
         val sharedPreference = requireActivity().getSharedPreferences("TOKEN_PREF",
             Context.MODE_PRIVATE)
         accessToken = "JWT "+sharedPreference.getString("accessToken","name").toString()
+        phoneno = sharedPreference.getString("phoneno",null).toString()
 
         loadContacts()
-        syncContacts("+917002838640")
+        //syncContacts("+917002838640")
     }
 
 
@@ -71,7 +73,8 @@ class ContactsListFragment : Fragment() {
         }
     }
 
-    var contactList: ArrayList<Contacts> = ArrayList()
+    //var contactList: ArrayList<Contacts> = ArrayList()
+    var contactList: ArrayList<String> = ArrayList()
 
     private val PROJECTION = arrayOf(
         ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
@@ -100,15 +103,20 @@ class ContactsListFragment : Fragment() {
                     number = cursor.getString(numberIndex)
                     number = number.replace(" ", "")
                     if (!mobileNoSet.contains(number)) {
-                        contactList.add(Contacts(name, number))
+                        //contactList.add(Contacts(name, number))
+                        contactList.add(number)
                         mobileNoSet.add(number)
                         Log.d(
                             "hvy", "onCreaterrView  Phone Number: name = " + name
                                     + " No = " + number
                         )
+
+                        Log.i("contactList", contactList.toString())
                         /*contactList.forEach {
                             syncContacts(number)
                         }*/
+                        syncContacts(contactList)
+
                     }
                 }
             } finally {
@@ -117,18 +125,18 @@ class ContactsListFragment : Fragment() {
         }
     }
 
-    private fun syncContacts(phoneno: String){
+    private fun syncContacts(phonenoList: List<String>){
         val loader = requireActivity().loadingDialog()
         loader.show()
-        syncContactsViewModel.syncContacts(phoneno.takeLast(10),accessToken).observe(viewLifecycleOwner, androidx.lifecycle.Observer { outcome->
+        syncContactsViewModel.syncContacts(phonenoList,accessToken).observe(viewLifecycleOwner, androidx.lifecycle.Observer { outcome->
             loader.dismiss()
             when(outcome){
                 is Outcome.Success ->{
                     if(outcome.data.status =="success"){
-                        val user = outcome.data.user
-                        val userList = listOf<User>(user)
-                        contactListRecycler.adapter = ContactListAdapter(userList,requireActivity())
-                        Log.i("clUser",user.toString())
+                        val users = outcome.data.userList
+                        //val userList = listOf<User>(user)
+                        contactListRecycler.adapter = ContactListAdapter(users,requireActivity(),phoneno)
+                        Log.i("clUser",users.toString())
                     }else{
                         Toast.makeText(activity,"error !!!", Toast.LENGTH_SHORT).show()
                     }
